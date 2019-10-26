@@ -1,0 +1,5 @@
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'On Demand Cache', 'Implementation-Version': project.version
+    }
+}

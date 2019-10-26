@@ -1,0 +1,126 @@
+buildscript {
+    repositories {
+       jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+'
+    }
+}
+
+configure (subprojects.findAll{ it.name != 'libraries' }) {
+    println "configuring ${it}"
+
+    apply plugin: 'idea'
+    apply plugin: 'groovy'
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+    apply plugin: 'com.jfrog.bintray'
+
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        implementation 'org.codehaus.groovy:groovy-all:2.5.8'
+        testImplementation 'org.spockframework:spock-core:1.3-groovy-2.5'
+        testRuntime group: 'ch.qos.logback', name: 'logback-classic', version: logbackVersion
+        testRuntime group: 'ch.qos.logback', name: 'logback-core', version: logbackVersion
+    }
+
+    tasks.withType(Test) { testTask ->
+        beforeTest { TestDescriptor descriptor->
+            logger.warn "RUNNING ${testTask.name}: ${descriptor.className} \"${descriptor.name}\""
+        }
+        afterTest { TestDescriptor descriptor, TestResult result ->
+            long duration = result.endTime - result.startTime
+            String logMessage = "${result.resultType} (${duration} msecs): ${testTask.name} ${descriptor.className} \"${descriptor.name}\""
+            switch (result.resultType) {
+                case TestResult.ResultType.SUCCESS:
+                    logger.warn "${logMessage}"
+                    break;
+                case TestResult.ResultType.FAILURE:
+                    logger.error "${logMessage}"
+                    break;
+                case TestResult.ResultType.SKIPPED:
+                    logger.warn "${logMessage}"
+                    break;
+                default:
+                    logger.warn "${logMessage}"
+            }
+        }
+    }
+
+    task sourcesJar(type: Jar) {
+        archiveClassifier = 'sources'
+        from sourceSets.main.allGroovy
+    }
+
+
+// Create the pom configuration
+/*
+    def pomConfig = {
+        licenses {
+            license {
+                name "The Apache Software License, Version 2.0"
+                url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                distribution "repo"
+            }
+        }
+        developers {
+            developer {
+                id "dnscott"
+                name "Duncan Scott"
+                email "dnscott@gmail.com"
+            }
+        }
+
+        scm {
+            url "https://github.com/duncanscott/groovy-utils"
+        }
+    }
+*/
+
+// Create the publication with the pom configuration:
+    publishing {
+        publications {
+            MyPublication(MavenPublication) {
+                from components.java
+                artifact sourcesJar
+                //artifact javadocJar
+                groupId 'org.duncanscott'
+                artifactId project.name
+                version version
+            }
+        }
+    }
+
+    bintray {
+        user = System.getenv('BINTRAY_USER')
+        key = System.getenv('BINTRAY_KEY')
+        publications = ['MyPublication']
+
+        dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
+        publish = true //[Default: false] Whether version should be auto published after an upload
+        override = true //[Default: false] Whether to override version artifacts already published
+        //Package configuration. The plugin will use the repo and name properties to check if the package already exists. In that case, there's no need to configure the other package properties (like userOrg, desc, etc).
+        pkg {
+            repo = 'groovy-libs'
+            name = project.name
+            //userOrg = 'myorg' //An optional organization name when the repo belongs to one of the user's orgs
+            //desc = 'what a fantastic package indeed!'
+            websiteUrl = 'https://github.com/duncanscott/groovy-utils'
+            issueTrackerUrl = 'https://github.com/duncanscott/groovy-utils/issues'
+            vcsUrl = 'git@github.com:duncanscott/groovy-utils.git'
+            licenses = ['Apache-2.0']
+            vcsUrl = 'https://github.com/duncanscott/groovy-utils.git'
+
+            licenses = ['Apache-2.0']
+            //labels = ['gear', 'gore', 'gorilla']
+            publicDownloadNumbers = true
+            //attributes= ['a': ['ay1', 'ay2'], 'b': ['bee'], c: 'cee'] //Optional package-level attributes
+
+            githubRepo = 'duncanscott/groovy-utils' //Optional Github repository
+            //githubReleaseNotesFile = 'README.md' //Optional Github readme file
+        }
+    }
+}

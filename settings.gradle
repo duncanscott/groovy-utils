@@ -1,0 +1,6 @@
+rootProject.name = 'groovy-utils'
+
+include 'libraries:enum-util'
+include 'libraries:json-util'
+include 'libraries:on-demand-cache'
+include 'libraries:web-util'

@@ -1,0 +1,11 @@
+dependencies {
+    api 'com.googlecode.json-simple:json-simple:1.1.1'
+    api project(':libraries:on-demand-cache')
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: sl4jVersion
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Json Util', 'Implementation-Version': project.version
+    }
+}
