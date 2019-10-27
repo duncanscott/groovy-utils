@@ -1,6 +1,3 @@
-dependencies {
-    api project(':libraries:on-demand-cache')
-}
 
 jar {
     manifest {
