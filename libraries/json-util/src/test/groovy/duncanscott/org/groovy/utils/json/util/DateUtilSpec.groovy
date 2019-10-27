@@ -34,6 +34,12 @@ class DateUtilSpec extends Specification {
 
         DateUtil.parseDateList(jsonObject2['date-1'] as List) == date1
         DateUtil.parseDateList(jsonObject1['date-2'] as List) == date2
+
+        when:
+        String dateString = DateUtil.dateToString(date1)
+
+        then:
+        noExceptionThrown()
     }
 
 }

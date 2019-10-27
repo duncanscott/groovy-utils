@@ -25,7 +25,7 @@ class DateUtil {
         ]
 
     static String dateToString(Date date) {
-        date?.format(dateFormatText)
+        dateFormat.format(date)
     }
 
     static int compareDateLists(List date1, List date2) {
