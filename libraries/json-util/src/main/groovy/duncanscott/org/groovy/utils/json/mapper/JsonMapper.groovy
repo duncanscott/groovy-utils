@@ -103,15 +103,15 @@ class JsonMapper<K extends JsonMapper> {
     String getObjectName() {
         if (key) {
             if (objectId) {
-                return "(${key})[${objectId}]"
+                return "(${key})[${objectId}])"
             } else {
                 return "(${key})"
             }
         } else {
             if (objectId) {
-                return "[${objectId}]"
+                return "([${objectId}])"
             } else {
-                return ''
+                return '()'
             }
         }
 
