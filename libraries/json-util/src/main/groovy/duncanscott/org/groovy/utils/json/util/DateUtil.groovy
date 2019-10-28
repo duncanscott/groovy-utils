@@ -28,6 +28,10 @@ class DateUtil {
         dateFormat.format(date)
     }
 
+    static Date stringToDate(String dateString) {
+        dateFormat.parse(dateString)
+    }
+
     static int compareDateLists(List date1, List date2) {
         if (!date1 || !date2) {
             log.error 'NULL date passed to compareDateLists'

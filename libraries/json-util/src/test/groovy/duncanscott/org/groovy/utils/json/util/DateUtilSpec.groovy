@@ -1,6 +1,7 @@
 package duncanscott.org.groovy.utils.json.util
 
 import duncanscott.org.groovy.utils.json.util.DateUtil
+import groovy.util.logging.Slf4j
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
@@ -8,6 +9,7 @@ import spock.lang.Specification
 
 import java.time.LocalDate
 
+@Slf4j
 class DateUtilSpec extends Specification {
 
     void "test compareDateLists"() {
@@ -34,12 +36,26 @@ class DateUtilSpec extends Specification {
 
         DateUtil.parseDateList(jsonObject2['date-1'] as List) == date1
         DateUtil.parseDateList(jsonObject1['date-2'] as List) == date2
+    }
+
+    void "test dateToString stringToDate"() {
+        setup:
+        String dateString = '2019-Oct-27 20:49:26.399'
 
         when:
-        String dateString = DateUtil.dateToString(date1)
+        Date date1 = DateUtil.stringToDate(dateString)
 
         then:
         noExceptionThrown()
+        date1
+
+        when:
+        String dateString1 = DateUtil.dateToString(date1)
+
+        then:
+        noExceptionThrown()
+        dateString1 == dateString
     }
+
 
 }
