@@ -1,7 +1,5 @@
 package duncanscott.org.groovy.utils.json.util
 
-import duncanscott.org.groovy.utils.json.util.DateUtil
-import groovy.util.logging.Slf4j
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
@@ -9,7 +7,6 @@ import spock.lang.Specification
 
 import java.time.LocalDate
 
-@Slf4j
 class DateUtilSpec extends Specification {
 
     void "test compareDateLists"() {
