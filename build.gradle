@@ -112,15 +112,12 @@ configure (subprojects.findAll{ it.name != 'libraries' }) {
             issueTrackerUrl = 'https://github.com/duncanscott/groovy-utils/issues'
             vcsUrl = 'git@github.com:duncanscott/groovy-utils.git'
             licenses = ['Apache-2.0']
-            vcsUrl = 'https://github.com/duncanscott/groovy-utils.git'
-
-            licenses = ['Apache-2.0']
-            //labels = ['gear', 'gore', 'gorilla']
             publicDownloadNumbers = true
+            //labels = ['gear', 'gore', 'gorilla']
             //attributes= ['a': ['ay1', 'ay2'], 'b': ['bee'], c: 'cee'] //Optional package-level attributes
 
             githubRepo = 'duncanscott/groovy-utils' //Optional Github repository
-            //githubReleaseNotesFile = 'README.md' //Optional Github readme file
+            githubReleaseNotesFile = 'README.md' //Optional Github readme file
         }
     }
 }
