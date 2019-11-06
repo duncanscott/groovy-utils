@@ -1,12 +1,12 @@
 package duncanscott.org.groovy.utils.json.mapper
 
-
 import duncanscott.org.groovy.utils.ondemandcache.OnDemandCacheMapped
 import org.json.simple.JSONObject
 
 
 class JsonMapper<K extends JsonMapper> {
 
+    private final OnDemandCacheMapped<String, Map<String,JsonMapper>> cachedChildObjects = new OnDemandCacheMapped<>()
     private final OnDemandCacheMapped<String,List<JsonMapper>> cachedChildArrays = new OnDemandCacheMapped<>()
     private final OnDemandCacheMapped<String,JsonMapper> cachedChildren = new OnDemandCacheMapped<>()
 
@@ -58,8 +58,21 @@ class JsonMapper<K extends JsonMapper> {
         mappingErrors << new MappingError(this,message)
     }
 
+    Map<String,JsonMapper> childObjects(String key, Class<JsonMapper> clazz) {
+        cachedChildObjects.fetch(key) {
+            Map<String,JsonMapper> keyChild = [:]
+            json[key].each { String k, JSONObject childJson ->
+                JsonMapper childMapper = clazz.newInstance()
+                childMapper.json = childJson
+                childMapper.setParent(this,key)
+                keyChild[k] = childMapper
+            }
+            keyChild
+        }
+    }
+
     List<JsonMapper> childElements(String key, Class<JsonMapper> clazz) {
-        cachedChildArrays.fetch(key) { String k ->
+        cachedChildArrays.fetch(key) {
             Integer arrayIndex = 0
             json[key]?.collect { JSONObject childJson ->
                 JsonMapper childMapper = clazz.newInstance()
@@ -72,7 +85,7 @@ class JsonMapper<K extends JsonMapper> {
     }
 
     JsonMapper childElement(String key, Class<JsonMapper> clazz) {
-        cachedChildren.fetch(key) { String k ->
+        cachedChildren.fetch(key) {
             Object childJson = json[key]
             if (childJson instanceof JSONObject) {
                 JsonMapper childMapper = clazz.newInstance()
