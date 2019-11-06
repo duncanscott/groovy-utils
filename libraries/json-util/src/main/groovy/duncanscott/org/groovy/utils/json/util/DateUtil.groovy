@@ -71,9 +71,9 @@ class DateUtil {
         return json
     }
 
-    static Date parseDateList(timeValues) {
+    static Date parseDateList(List timeValues) {
         Calendar c = Calendar.getInstance()
-        if (timeValues && timeValues instanceof List) {
+        if (timeValues) {
             timeValues.eachWithIndex { timeValue, Integer index ->
                 Integer timeValueInteger = timeValue as Integer
                 if (index < calendarFields.size()) {
