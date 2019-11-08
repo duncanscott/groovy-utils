@@ -37,21 +37,36 @@ class DateUtilSpec extends Specification {
 
     void "test dateToString stringToDate"() {
         setup:
-        String dateString = '2019-Oct-27 20:49:26.399'
+        String dateString1 = '1993-07-28T21:39:07.543Z'
+        String dateString3 = '1993-07-28T21:39:07.544Z'
 
         when:
-        Date date1 = DateUtil.stringToDate(dateString)
+        Date date1 = DateUtil.stringToDate(dateString1)
 
         then:
         noExceptionThrown()
         date1
 
         when:
-        String dateString1 = DateUtil.dateToString(date1)
+        String dateString2 = DateUtil.dateToString(date1)
 
         then:
         noExceptionThrown()
-        dateString1 == dateString
+        dateString2 == dateString1
+
+        when:
+        Date date2 = DateUtil.stringToDate(dateString2)
+
+        then:
+        date2 == date1
+
+        when:
+        Date date3 = DateUtil.stringToDate(dateString3)
+
+        then:
+        date3 > date1
+        date3 != date2
+
     }
 
 

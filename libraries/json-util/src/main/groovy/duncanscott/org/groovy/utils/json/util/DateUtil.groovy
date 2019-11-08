@@ -11,8 +11,16 @@ import java.text.SimpleDateFormat
 @Slf4j
 class DateUtil {
 
-    static final String dateFormatText = 'yyyy-MMM-dd HH:mm:ss.SSS'
+    static final TimeZone tz = TimeZone.getTimeZone('UTC');
+
+    //aim for Javascript ISO date format:
+    // e.g. "1993-07-28T21:39:07.000Z"       javascript Date.prototype.toISOString()
+    //yyyy-MMM-dd HH:mm:ss.SSS (old format)
+    static final String dateFormatText = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"  //Quoted "Z" to indicate UTC, no timezone offset
     static final SimpleDateFormat dateFormat = new SimpleDateFormat(dateFormatText)
+    static {
+        dateFormat.setTimeZone(tz)
+    }
 
     static final List<Integer> calendarFields = [
             Calendar.YEAR,
