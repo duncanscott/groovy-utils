@@ -11,7 +11,8 @@ import java.text.SimpleDateFormat
 @Slf4j
 class DateUtil {
 
-    static final TimeZone tz = TimeZone.getTimeZone('UTC');
+    static final String UTC = 'UTC'
+    static final TimeZone greenwichMeanTime = TimeZone.getTimeZone(UTC);
 
     //aim for Javascript ISO date format:
     // e.g. "1993-07-28T21:39:07.000Z"       javascript Date.prototype.toISOString()
@@ -19,7 +20,7 @@ class DateUtil {
     static final String dateFormatText = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"  //Quoted "Z" to indicate UTC, no timezone offset
     static final SimpleDateFormat dateFormat = new SimpleDateFormat(dateFormatText)
     static {
-        dateFormat.setTimeZone(tz)
+        dateFormat.setTimeZone(greenwichMeanTime)
     }
 
     static final List<Integer> calendarFields = [
@@ -31,6 +32,12 @@ class DateUtil {
             Calendar.SECOND,
             Calendar.MILLISECOND
         ]
+
+    static Calendar getUtcCalendar() {
+        Calendar c = Calendar.getInstance()
+        c.setTimeZone(greenwichMeanTime)
+        c
+    }
 
     static String dateToString(Date date) {
         dateFormat.format(date)
@@ -70,7 +77,7 @@ class DateUtil {
         JSONArray json = null
         if (date) {
             json = new JSONArray()
-            Calendar c = Calendar.getInstance()
+            Calendar c = utcCalendar
             c.setTime(date)
             calendarFields.each { Integer calendarField ->
                 json << c.get(calendarField)
@@ -80,14 +87,15 @@ class DateUtil {
     }
 
     static Date parseDateList(List timeValues) {
-        Calendar c = Calendar.getInstance()
+        Calendar c = utcCalendar
         if (timeValues) {
-            timeValues.eachWithIndex { timeValue, Integer index ->
-                Integer timeValueInteger = timeValue as Integer
-                if (index < calendarFields.size()) {
-                    Integer calendarField = calendarFields[index]
-                    c.set(calendarField, timeValueInteger)
-                }
+            Integer index = 0
+            Integer maxIndex = [timeValues.size(),calendarFields.size()].min()
+            while (index < maxIndex) {
+                Integer timeValue = timeValues[index] as Integer
+                Integer calendarField = calendarFields[index]
+                c.set(calendarField, timeValue)
+                ++index
             }
             return c.getTime()
         }
