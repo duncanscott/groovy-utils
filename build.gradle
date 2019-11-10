@@ -6,6 +6,7 @@ buildscript {
         }
     }
     dependencies {
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.10.0"
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+'
     }
 }
@@ -135,7 +136,7 @@ configure (subprojects.findAll{ it.name != 'libraries' }) {
                 maven = true
             }
             defaults {
-                publications ('mavenJava')
+                publications ('MyPublication')
                 publishPom = false
             }
         }
