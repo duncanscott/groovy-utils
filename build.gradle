@@ -120,4 +120,21 @@ configure (subprojects.findAll{ it.name != 'libraries' }) {
             githubReleaseNotesFile = 'README.md' //Optional Github readme file
         }
     }
+
+    artifactory {
+        contextUrl = System.getenv('ARTIFACTORY_CONTEXT_URL')
+        publish {
+            repository {
+                repoKey = it.version.endsWith('SNAPSHOT') ? 'libs-snapshot-local' : 'libs-release-local'
+                username = System.getenv('ARTIFACTORY_USER')
+                password =System.getenv('ARTIFACTORY_PASSWORD')
+                maven = true
+            }
+            defaults {
+                publications ('mavenJava')
+                publishPom = false
+            }
+        }
+    }
+
 }
