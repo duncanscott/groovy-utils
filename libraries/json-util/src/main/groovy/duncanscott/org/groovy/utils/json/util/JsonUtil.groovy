@@ -94,7 +94,7 @@ class JsonUtil {
             return null
         }
         if (obj instanceof Date) {
-            return DateUtil.dateToJsonArray((Date) obj)
+            return DateUtil.dateToString((Date) obj)
         }
         if (obj instanceof Map) {
             return toJsonObject(obj)
