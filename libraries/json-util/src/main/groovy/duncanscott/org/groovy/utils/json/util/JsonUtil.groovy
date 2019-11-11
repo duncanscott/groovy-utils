@@ -114,7 +114,7 @@ class JsonUtil {
         if (obj instanceof GroovyObject) {
             return groovyObjectToJson(obj)
         }
-        return obj
+        return "$obj".toString()
     }
 
 
