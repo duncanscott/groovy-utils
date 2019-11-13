@@ -122,9 +122,9 @@ class JsonMapper<K extends JsonMapper> {
             }
         } else {
             if (objectId) {
-                return "([${objectId}])"
+                return "[${objectId}]"
             } else {
-                return '()'
+                return ''
             }
         }
 
