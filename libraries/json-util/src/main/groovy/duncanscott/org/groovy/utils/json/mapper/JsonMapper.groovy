@@ -116,15 +116,15 @@ class JsonMapper<K extends JsonMapper> {
     String getObjectName() {
         if (key) {
             if (objectId) {
-                return "(${key}[${objectId}])"
+                return "${key}[${objectId}]"
             } else {
-                return "(${key})"
+                return "${key}"
             }
         } else {
             if (objectId) {
                 return "[${objectId}]"
             } else {
-                return ''
+                return '#'
             }
         }
 
@@ -132,7 +132,7 @@ class JsonMapper<K extends JsonMapper> {
 
     String toString() {
         if (parent) {
-            return "${parent}${objectName}"
+            return "${parent}/${objectName}"
         } else {
             return objectName
         }
