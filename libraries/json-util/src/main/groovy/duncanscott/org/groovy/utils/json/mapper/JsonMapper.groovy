@@ -1,10 +1,15 @@
 package duncanscott.org.groovy.utils.json.mapper
 
 import duncanscott.org.groovy.utils.ondemandcache.OnDemandCacheMapped
+import org.json.simple.JSONArray
+import org.json.simple.JSONAware
 import org.json.simple.JSONObject
 
 
 class JsonMapper<K extends JsonMapper> {
+
+    //these are elements (JSONObject or JSONArray) under keys that are not mapped to objects.
+    OnDemandCacheMapped<String, JSONAware> cachedSections = new OnDemandCacheMapped<>(false)
 
     private final OnDemandCacheMapped<String, Map<String,JsonMapper>> cachedChildObjects = new OnDemandCacheMapped<>()
     private final OnDemandCacheMapped<String,List<JsonMapper>> cachedChildArrays = new OnDemandCacheMapped<>()
@@ -97,6 +102,22 @@ class JsonMapper<K extends JsonMapper> {
         }
     }
 
+    JSONObject createObject(String sectionKey) {
+        objectSection(sectionKey,true)
+    }
+
+    JSONObject getObject(String sectionKey) {
+        objectSection(sectionKey,false)
+    }
+
+    JSONArray createArray(String sectionKey) {
+        arraySection(sectionKey,true)
+    }
+
+    JSONArray getArray(String sectionKey) {
+        arraySection(sectionKey,false)
+    }
+
     List<String> getKeyChain() {
         if (parent) {
             List<String> chain = new ArrayList<String>(parent.keyChain)
@@ -135,6 +156,38 @@ class JsonMapper<K extends JsonMapper> {
             return "${parent}/${objectName}"
         } else {
             return objectName
+        }
+    }
+
+
+    private JSONObject objectSection(String sectionKey, boolean create = false) {
+        (JSONObject) cachedSections.fetch(sectionKey) {
+            Object existingSection = json[sectionKey]
+            if (existingSection instanceof JSONObject) {
+                return existingSection
+            }
+            if (create) {
+                JSONObject newSection = new JSONObject()
+                json[sectionKey] = newSection
+                return newSection
+            }
+            return null
+        }
+    }
+
+
+    private JSONArray arraySection(String sectionKey, boolean create = false) {
+        (JSONArray) cachedSections.fetch(sectionKey) {
+            Object existingSection = json[sectionKey]
+            if (existingSection instanceof JSONArray) {
+                return existingSection
+            }
+            if (create) {
+                JSONArray newSection = new JSONArray()
+                json[sectionKey] = newSection
+                return newSection
+            }
+            return null
         }
     }
 
