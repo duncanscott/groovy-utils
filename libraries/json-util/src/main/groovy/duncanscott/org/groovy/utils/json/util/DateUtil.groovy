@@ -43,7 +43,7 @@ class DateUtil {
         dateToString(new Date())
     }
 
-    static String nowToJsonArray() {
+    static JSONArray nowToJsonArray() {
         dateToJsonArray(new Date())
     }
 
