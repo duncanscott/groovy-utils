@@ -39,6 +39,14 @@ class DateUtil {
         c
     }
 
+    static String nowToString() {
+        dateToString(new Date())
+    }
+
+    static String nowToJsonArray() {
+        dateToJsonArray(new Date())
+    }
+
     static String dateToString(Date date) {
         dateFormat.format(date)
     }
