@@ -160,7 +160,7 @@ class JsonMapper<K extends JsonMapper> {
     }
 
 
-    private JSONObject objectSection(String sectionKey, boolean create = false) {
+    JSONObject objectSection(String sectionKey, boolean create = false) {
         (JSONObject) cachedSections.fetch(sectionKey) {
             Object existingSection = json[sectionKey]
             if (existingSection instanceof JSONObject) {
@@ -176,7 +176,7 @@ class JsonMapper<K extends JsonMapper> {
     }
 
 
-    private JSONArray arraySection(String sectionKey, boolean create = false) {
+    JSONArray arraySection(String sectionKey, boolean create = false) {
         (JSONArray) cachedSections.fetch(sectionKey) {
             Object existingSection = json[sectionKey]
             if (existingSection instanceof JSONArray) {
