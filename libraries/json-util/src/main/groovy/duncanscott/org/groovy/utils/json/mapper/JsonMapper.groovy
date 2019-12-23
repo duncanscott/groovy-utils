@@ -66,7 +66,8 @@ class JsonMapper<K extends JsonMapper> {
     Map<String,JsonMapper> childObjects(String key, Class<JsonMapper> clazz) {
         cachedChildObjects.fetch(key) {
             Map<String,JsonMapper> keyChild = [:]
-            json[key].each { String k, JSONObject childJson ->
+            JSONObject subJson = objectSection(key)
+            subJson.each { String k, JSONObject childJson ->
                 JsonMapper childMapper = clazz.newInstance()
                 childMapper.json = childJson
                 childMapper.setParent(this,key)
@@ -79,7 +80,7 @@ class JsonMapper<K extends JsonMapper> {
     List<JsonMapper> childElements(String key, Class<JsonMapper> clazz) {
         cachedChildArrays.fetch(key) {
             Integer arrayIndex = 0
-            json[key]?.collect { JSONObject childJson ->
+            arraySection(key)?.collect { JSONObject childJson ->
                 JsonMapper childMapper = clazz.newInstance()
                 childMapper.json = childJson
                 childMapper.setParent(this,key)
@@ -89,10 +90,10 @@ class JsonMapper<K extends JsonMapper> {
         }
     }
 
-    JsonMapper childElement(String key, Class<JsonMapper> clazz) {
+    JsonMapper childElement(String key, Class<JsonMapper> clazz, boolean createIfAbsent = false) {
         cachedChildren.fetch(key) {
-            Object childJson = json[key]
-            if (childJson instanceof JSONObject) {
+            JSONObject childJson = objectSection(key, createIfAbsent)
+            if (childJson != null) {
                 JsonMapper childMapper = clazz.newInstance()
                 childMapper.json = childJson
                 childMapper.setParent(this,key)
@@ -102,20 +103,51 @@ class JsonMapper<K extends JsonMapper> {
         }
     }
 
-    JSONObject createObject(String sectionKey) {
-        objectSection(sectionKey,true)
+    JSONObject objectSection(String key, boolean create = false) {
+        (JSONObject) cachedSections.fetch(key) {
+            Object existingSection = json[key]
+            if (existingSection instanceof JSONObject) {
+                return existingSection
+            }
+            if (create) {
+                JSONObject newSection = new JSONObject()
+                json[key] = newSection
+                return newSection
+            }
+            return null
+        }
     }
 
-    JSONObject getObject(String sectionKey) {
-        objectSection(sectionKey,false)
+
+    JSONArray arraySection(String key, boolean create = false) {
+        (JSONArray) cachedSections.fetch(key) {
+            Object existingSection = json[key]
+            if (existingSection instanceof JSONArray) {
+                return existingSection
+            }
+            if (create) {
+                JSONArray newSection = new JSONArray()
+                json[key] = newSection
+                return newSection
+            }
+            return null
+        }
     }
 
-    JSONArray createArray(String sectionKey) {
-        arraySection(sectionKey,true)
+    JSONObject createObject(String key) {
+        objectSection(key,true)
     }
 
-    JSONArray getArray(String sectionKey) {
-        arraySection(sectionKey,false)
+    JSONObject getObject(String key) {
+        objectSection(key,false)
+    }
+
+    JSONArray createArray(String key) {
+        arraySection(key,true)
+    }
+
+    JSONArray getArray(String key) {
+        arraySection(key,false)
     }
 
     List<String> getKeyChain() {
@@ -159,36 +191,5 @@ class JsonMapper<K extends JsonMapper> {
         }
     }
 
-
-    JSONObject objectSection(String sectionKey, boolean create = false) {
-        (JSONObject) cachedSections.fetch(sectionKey) {
-            Object existingSection = json[sectionKey]
-            if (existingSection instanceof JSONObject) {
-                return existingSection
-            }
-            if (create) {
-                JSONObject newSection = new JSONObject()
-                json[sectionKey] = newSection
-                return newSection
-            }
-            return null
-        }
-    }
-
-
-    JSONArray arraySection(String sectionKey, boolean create = false) {
-        (JSONArray) cachedSections.fetch(sectionKey) {
-            Object existingSection = json[sectionKey]
-            if (existingSection instanceof JSONArray) {
-                return existingSection
-            }
-            if (create) {
-                JSONArray newSection = new JSONArray()
-                json[sectionKey] = newSection
-                return newSection
-            }
-            return null
-        }
-    }
 
 }
