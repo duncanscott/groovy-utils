@@ -160,22 +160,19 @@ class JsonMapper<K extends JsonMapper> {
     }
 
     String getObjectId() {
-        if (index) {
-            return index
-        }
         return null
     }
 
     String getObjectName() {
         if (key) {
-            if (objectId) {
-                return "${key}[${objectId}]"
+            if (index) {
+                return "${key}/${index}"
             } else {
                 return "${key}"
             }
         } else {
             if (objectId) {
-                return "[${objectId}]"
+                return "#${objectId}"
             } else {
                 return '#'
             }
