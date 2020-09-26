@@ -165,7 +165,7 @@ class JsonMapper<K extends JsonMapper> {
 
     String getObjectName() {
         if (key) {
-            if (index) {
+            if (index != null) {
                 return "${key}/${index}"
             } else {
                 return "${key}"
