@@ -8,18 +8,10 @@ import java.util.concurrent.atomic.AtomicReference
  */
 public class OnDemandCache<K> {
 
-    final boolean cacheNulls
-
     private final AtomicReference<K> cachedObject = new AtomicReference<>()
     private final AtomicBoolean locked = new AtomicBoolean(false)
 
-    OnDemandCache() {
-        this.cacheNulls = false
-    }
-
-    OnDemandCache(boolean cacheNulls) {
-        this.cacheNulls = cacheNulls
-    }
+    OnDemandCache() {}
 
     synchronized void forceCache(K objectToCache) {
         cachedObject.set(objectToCache)
@@ -28,9 +20,8 @@ public class OnDemandCache<K> {
 
     synchronized void cache(K objectToCache) {
         if (!locked.get()) {
-            if (cacheNulls || objectToCache != null) {
-                forceCache(objectToCache)
-            }
+            cachedObject.set(objectToCache)
+            locked.set(true)
         }
     }
 
