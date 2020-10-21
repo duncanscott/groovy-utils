@@ -1,0 +1,11 @@
+dependencies {
+    api group: 'com.googlecode.json-simple', name: 'json-simple', version: jsonSimpleVersion
+    api group: 'org.apache.httpcomponents', name: 'httpclient', version: httpcomponentsVersion
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: sl4jVersion
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Json Http Client', 'Implementation-Version': project.version
+    }
+}
