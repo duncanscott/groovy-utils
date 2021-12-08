@@ -12,7 +12,7 @@ import org.json.simple.parser.JSONParser
 
 class JsonHttpClient {
 
-    private final String authorizationHeader
+    final String authorizationHeader
 
     JsonHttpClient() {
         this.authorizationHeader = null
