@@ -8,7 +8,12 @@ class WebException extends BundleAwareException implements HttpStatusCodeReporte
 		super()
 		this.status = status
 	}
-	
+
+	WebException(Integer status, Throwable cause) {
+		super(cause)
+		this.status = status
+	}
+
 	WebException(Map messageBundleParams, Integer status) {
 		super(messageBundleParams)
 		this.status = status
