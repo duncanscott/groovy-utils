@@ -12,13 +12,13 @@ import org.json.simple.parser.JSONParser
 
 class JsonHttpClient {
 
-    private String authorizationHeader
+    private final String authorizationHeader
 
-    JsonHttpResponse() {
+    JsonHttpClient() {
         this.authorizationHeader = null
     }
 
-    JsonHttpResponse(String username, String password) {
+    JsonHttpClient(String username, String password) {
         this.authorizationHeader = 'Basic ' + "${username}:${password}".bytes.encodeBase64().toString()
     }
 
