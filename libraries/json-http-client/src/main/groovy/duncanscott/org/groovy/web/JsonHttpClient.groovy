@@ -17,16 +17,31 @@ class JsonHttpClient {
         submitRequest(httpGet)
     }
 
+    static JsonHttpResponse post(String url) {
+        HttpPost httpPost = new HttpPost(url)
+        submitRequest(httpPost)
+    }
+
     static JsonHttpResponse post(String url, String json) {
         HttpPost httpPost = new HttpPost(url)
         setJson(httpPost,json)
         submitRequest(httpPost)
     }
 
+    static JsonHttpResponse put(String url) {
+        HttpPut httpPut = new HttpPut(url)
+        submitRequest(httpPut)
+    }
+
     static JsonHttpResponse put(String url, String json) {
         HttpPut httpPut = new HttpPut(url)
         setJson(httpPut, json)
         submitRequest(httpPut)
+    }
+
+    static JsonHttpResponse delete(String url) {
+        HttpDelete httpDelete = new HttpDelete(url)
+        submitRequest(httpDelete)
     }
 
     static JsonHttpResponse submitRequest(HttpRequestBase request) {
