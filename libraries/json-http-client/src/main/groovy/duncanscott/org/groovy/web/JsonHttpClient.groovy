@@ -12,39 +12,49 @@ import org.json.simple.parser.JSONParser
 
 class JsonHttpClient {
 
-    static JsonHttpResponse get(String url) {
+    private String authorizationHeader
+
+    JsonHttpResponse() {
+        this.authorizationHeader = null
+    }
+
+    JsonHttpResponse(String username, String password) {
+        this.authorizationHeader = 'Basic ' + "${username}:${password}".bytes.encodeBase64().toString()
+    }
+
+    JsonHttpResponse get(String url) {
         HttpGet httpGet = new HttpGet(url)
         submitRequest(httpGet)
     }
 
-    static JsonHttpResponse post(String url) {
+    JsonHttpResponse post(String url) {
         HttpPost httpPost = new HttpPost(url)
         submitRequest(httpPost)
     }
 
-    static JsonHttpResponse post(String url, String json) {
+    JsonHttpResponse post(String url, String json) {
         HttpPost httpPost = new HttpPost(url)
         setJson(httpPost,json)
         submitRequest(httpPost)
     }
 
-    static JsonHttpResponse put(String url) {
+    JsonHttpResponse put(String url) {
         HttpPut httpPut = new HttpPut(url)
         submitRequest(httpPut)
     }
 
-    static JsonHttpResponse put(String url, String json) {
+    JsonHttpResponse put(String url, String json) {
         HttpPut httpPut = new HttpPut(url)
         setJson(httpPut, json)
         submitRequest(httpPut)
     }
 
-    static JsonHttpResponse delete(String url) {
+    JsonHttpResponse delete(String url) {
         HttpDelete httpDelete = new HttpDelete(url)
         submitRequest(httpDelete)
     }
 
-    static JsonHttpResponse submitRequest(HttpRequestBase request) {
+    JsonHttpResponse submitRequest(HttpRequestBase request) {
         addHeaders(request)
         JsonHttpResponse jsonResponse = new JsonHttpResponse()
         jsonResponse.uri = request.URI
@@ -64,16 +74,19 @@ class JsonHttpClient {
         jsonResponse
     }
 
-    private static CloseableHttpClient getHttpClient() {
+    private CloseableHttpClient getHttpClient() {
         HttpClientBuilder.create().build()
     }
     
-    private static void setJson(HttpEntityEnclosingRequestBase request, String json) {
+    private void setJson(HttpEntityEnclosingRequestBase request, String json) {
         StringEntity entity = new StringEntity(json)
         request.setEntity(entity)
     }
 
-    private static void addHeaders(HttpRequestBase request) {
+    private void addHeaders(HttpRequestBase request) {
+        if (authorizationHeader) {
+            request.setHeader(HttpHeaders.AUTHORIZATION, authorizationHeader)
+        }
         request.setHeader(HttpHeaders.ACCEPT, 'application/json')
         request.setHeader(HttpHeaders.CONTENT_TYPE, 'application/json')
     }

@@ -30,7 +30,7 @@ class JsonHttpResponse {
     String toString() {
         if (uri) {
             if (statusLine) {
-                return "${uri}(${statusLine})"
+                return "${uri} (${statusLine})"
             } else {
                 return "${uri}"
             }
