@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.apache.groovy:groovy:4.0.13'
+    implementation group: 'org.apache.groovy', name: 'groovy', version: groovyVersion
     implementation group: 'org.slf4j', name: 'slf4j-api', version: sl4jVersion
 
     api group: 'com.googlecode.json-simple', name: 'json-simple', version: jsonSimpleVersion
