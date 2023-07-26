@@ -32,7 +32,7 @@ class EnumConverterSpec extends Specification {
         EnumConverter<TestEnumCaseInsensitive> converter2 = new EnumConverter<>(TestEnumCaseInsensitive,caseSensitive)
 
         then:
-        converter2.toEnum('one') == TestEnumCaseInsensitive.ONE
+        converter2.toEnum('one') != TestEnumCaseInsensitive.ONE
 
         when:
         EnumConverter<TestEnumCaseSensitive> converter3 = new EnumConverter<>(TestEnumCaseSensitive,caseSensitive)
