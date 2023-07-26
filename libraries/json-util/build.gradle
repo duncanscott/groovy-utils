@@ -1,5 +1,4 @@
 plugins {
-    id 'groovy'
     id 'java-library'
     id 'maven-publish'
     id 'idea'
@@ -11,14 +10,12 @@ repositories {
 }
 
 dependencies {
-    implementation group: 'org.codehaus.groovy', name: 'groovy-all', version: groovyVersion
+    implementation group: 'org.apache.groovy', name: 'groovy-all', version: groovyVersion, ext: 'pom'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: sl4jVersion
 
     api project(':libraries:on-demand-cache')
-
     api group: 'com.googlecode.json-simple', name: 'json-simple', version: jsonSimpleVersion
     api group: 'org.apache.httpcomponents', name: 'httpclient', version: httpcomponentsVersion
-
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: sl4jVersion
 
     testRuntimeOnly group: 'ch.qos.logback', name: 'logback-classic', version: logbackVersion
     testRuntimeOnly group: 'ch.qos.logback', name: 'logback-core', version: logbackVersion
@@ -27,7 +24,7 @@ dependencies {
 testing {
     suites {
         test {
-            useSpock('2.2-groovy-3.0')
+            useSpock(spockVersion)
         }
     }
 }
@@ -38,60 +35,9 @@ jar {
     }
 }
 
-
-tasks.withType(Test) { testTask ->
-    beforeTest { TestDescriptor descriptor->
-        logger.warn "RUNNING ${testTask.name}: ${descriptor.className} \"${descriptor.name}\""
-    }
-    afterTest { TestDescriptor descriptor, TestResult result ->
-        long duration = result.endTime - result.startTime
-        String logMessage = "${result.resultType} (${duration} msecs): ${testTask.name} ${descriptor.className} \"${descriptor.name}\""
-        switch (result.resultType) {
-            case TestResult.ResultType.SUCCESS:
-                logger.warn "${logMessage}"
-                break;
-            case TestResult.ResultType.FAILURE:
-                logger.error "${logMessage}"
-                break;
-            case TestResult.ResultType.SKIPPED:
-                logger.warn "${logMessage}"
-                break;
-            default:
-                logger.warn "${logMessage}"
-        }
-    }
-}
-
-task sourcesJar(type: Jar) {
-    archiveClassifier = 'sources'
-    from sourceSets.main.allGroovy
-}
-
-publishing {
-    publications {
-        MyPublication(MavenPublication) {
-            from components.java
-            artifact sourcesJar
-            //artifact javadocJar
-            groupId 'org.duncanscott'
-            artifactId project.name
-            version version
-        }
-    }
-}
-
-artifactory {
-    contextUrl = System.getenv('ARTIFACTORY_CONTEXT_URL')
-    publish {
-        repository {
-            repoKey = it.version.endsWith('SNAPSHOT') ? 'libs-snapshot-local' : 'libs-release-local'
-            username = System.getenv('ARTIFACTORY_USER')
-            password =System.getenv('ARTIFACTORY_PASSWORD')
-            maven = true
-        }
-        defaults {
-            publications ('MyPublication')
-            publishPom = false
-        }
+// Apply a specific Java toolchain to ease working on different environments.
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
