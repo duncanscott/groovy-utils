@@ -1,0 +1,44 @@
+plugins {
+    id 'maven-publish'
+    id 'idea'
+    id "com.jfrog.artifactory" version "latest.release"
+}
+
+repositories {
+    mavenCentral()
+}
+
+subprojects {
+    tasks.register('sourcesJar', Jar) {
+        archiveClassifier = 'sources'
+        from sourceSets.main.allGroovy
+    }
+    publishing {
+        publications {
+            MyPublication(MavenPublication) {
+                from components.java
+                artifact sourcesJar
+                //artifact javadocJar
+                groupId 'org.duncanscott'
+                artifactId project.name
+                version version
+            }
+        }
+    }
+
+    artifactory {
+        contextUrl = System.getenv('ARTIFACTORY_CONTEXT_URL')
+        publish {
+            repository {
+                repoKey = it.version.endsWith('SNAPSHOT') ? 'libs-snapshot-local' : 'libs-release-local'
+                username = System.getenv('ARTIFACTORY_USER')
+                password =System.getenv('ARTIFACTORY_PASSWORD')
+                maven = true
+            }
+            defaults {
+                publications ('MyPublication')
+                publishPom = false
+            }
+        }
+    }
+}

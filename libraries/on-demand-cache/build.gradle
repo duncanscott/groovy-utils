@@ -1,9 +1,7 @@
 plugins {
     id 'groovy'
     id 'java-library'
-    id 'maven-publish'
     id 'idea'
-    id "com.jfrog.artifactory" version "latest.release"
 }
 
 repositories {
