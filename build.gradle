@@ -1,44 +1,50 @@
 plugins {
-    id 'maven-publish'
     id 'idea'
-    id "com.jfrog.artifactory" version "latest.release"
+    id 'com.jfrog.artifactory' version "latest.release"
 }
 
 repositories {
     mavenCentral()
 }
 
-subprojects {
-    tasks.register('sourcesJar', Jar) {
-        archiveClassifier = 'sources'
-        from sourceSets.main.allGroovy
-    }
+def javaProjects() {
+    subprojects.findAll { new File(it.projectDir, 'src').directory }
+}
+
+allprojects {
+    apply plugin: 'com.jfrog.artifactory'
+}
+
+configure(javaProjects()) {
+    apply plugin: 'maven-publish'
+
     publishing {
         publications {
-            MyPublication(MavenPublication) {
+            mavenJava(MavenPublication) {
                 from components.java
-                artifact sourcesJar
-                //artifact javadocJar
-                groupId 'org.duncanscott'
-                artifactId project.name
-                version version
+                artifact(file("$rootDir/gradle.properties"))
             }
         }
     }
+}
 
-    artifactory {
+artifactoryPublish.skip = true
+
+artifactory {
+    clientConfig.setIncludeEnvVars(true)
+
+    publish {
         contextUrl = System.getenv('ARTIFACTORY_CONTEXT_URL')
-        publish {
-            repository {
-                repoKey = it.version.endsWith('SNAPSHOT') ? 'libs-snapshot-local' : 'libs-release-local'
-                username = System.getenv('ARTIFACTORY_USER')
-                password =System.getenv('ARTIFACTORY_PASSWORD')
-                maven = true
-            }
-            defaults {
-                publications ('MyPublication')
-                publishPom = false
-            }
+        repository {
+            repoKey = it.version.endsWith('SNAPSHOT') ? 'libs-snapshot-local' : 'libs-release-local'
+            username = System.getenv('ARTIFACTORY_USER')
+            password =System.getenv('ARTIFACTORY_PASSWORD')
+            maven = true
+        }
+        defaults {
+            publications('mavenJava')
+            publishArtifacts = true
+            publishPom = false
         }
     }
 }
