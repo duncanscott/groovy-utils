@@ -11,12 +11,10 @@ def javaProjects() {
     subprojects.findAll { new File(it.projectDir, 'src').directory }
 }
 
-allprojects {
-    apply plugin: 'com.jfrog.artifactory'
-}
-
 configure(javaProjects()) {
+    apply plugin: 'java'
     apply plugin: 'maven-publish'
+    apply plugin: 'com.jfrog.artifactory'
 
     publishing {
         publications {
@@ -36,10 +34,9 @@ artifactory {
     publish {
         contextUrl = System.getenv('ARTIFACTORY_CONTEXT_URL')
         repository {
-            repoKey = it.version.endsWith('SNAPSHOT') ? 'libs-snapshot-local' : 'libs-release-local'
+            repoKey = version.endsWith('SNAPSHOT') ? 'libs-snapshot-local' : 'libs-release-local'
             username = System.getenv('ARTIFACTORY_USER')
-            password =System.getenv('ARTIFACTORY_PASSWORD')
-            maven = true
+            password = System.getenv('ARTIFACTORY_PASSWORD')
         }
         defaults {
             publications('mavenJava')
