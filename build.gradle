@@ -42,18 +42,22 @@ configure(javaProjects()) {
         }
     }
 
+    tasks.register('sourcesJar', Jar) {
+        archiveClassifier = 'sources'
+        from sourceSets.main.allGroovy
+    }
+
     publishing {
         publications {
             mavenJava(MavenPublication) {
                 from components.java
+                artifact sourcesJar
                 artifact(file("$rootDir/gradle.properties"))
             }
         }
     }
 
     artifactory {
-        clientConfig.setIncludeEnvVars(true)
-
         publish {
             contextUrl = System.getenv('ARTIFACTORY_CONTEXT_URL')
             repository {
@@ -63,11 +67,10 @@ configure(javaProjects()) {
             }
             defaults {
                 publications('mavenJava')
-                publishArtifacts = true
                 publishPom = false
             }
         }
     }
 }
 
-
+artifactoryPublish.skip = true
