@@ -67,7 +67,7 @@ configure(javaProjects()) {
             }
             defaults {
                 publications('mavenJava')
-                publishPom = false
+                publishPom = true
             }
         }
     }
