@@ -1,38 +1,5 @@
-plugins {
-    id 'groovy'
-    id 'java-library'
-    id 'idea'
-}
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation group: 'org.apache.groovy', name: 'groovy', version: groovyVersion
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: sl4jVersion
-
-    testRuntimeOnly group: 'ch.qos.logback', name: 'logback-classic', version: logbackVersion
-    testRuntimeOnly group: 'ch.qos.logback', name: 'logback-core', version: logbackVersion
-}
-
-testing {
-    suites {
-        test {
-            useSpock(spockVersion)
-        }
-    }
-}
-
 jar {
     manifest {
         attributes 'Implementation-Title': 'On Demand Cache', 'Implementation-Version': project.version
-    }
-}
-
-// Apply a specific Java toolchain to ease working on different environments.
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
     }
 }

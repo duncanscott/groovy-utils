@@ -12,9 +12,35 @@ def javaProjects() {
 }
 
 configure(javaProjects()) {
-    apply plugin: 'java'
+    apply plugin: 'groovy'
+    apply plugin: 'java-library'
     apply plugin: 'maven-publish'
     apply plugin: 'com.jfrog.artifactory'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        implementation group: 'org.apache.groovy', name: 'groovy', version: groovyVersion
+        implementation group: 'org.slf4j', name: 'slf4j-api', version: sl4jVersion
+        testRuntimeOnly group: 'ch.qos.logback', name: 'logback-classic', version: logbackVersion
+        testRuntimeOnly group: 'ch.qos.logback', name: 'logback-core', version: logbackVersion
+    }
+
+    testing {
+        suites {
+            test {
+                useSpock(spockVersion)
+            }
+        }
+    }
 
     publishing {
         publications {
@@ -24,24 +50,24 @@ configure(javaProjects()) {
             }
         }
     }
-}
 
-artifactoryPublish.skip = true
+    artifactory {
+        clientConfig.setIncludeEnvVars(true)
 
-artifactory {
-    clientConfig.setIncludeEnvVars(true)
-
-    publish {
-        contextUrl = System.getenv('ARTIFACTORY_CONTEXT_URL')
-        repository {
-            repoKey = version.endsWith('SNAPSHOT') ? 'libs-snapshot-local' : 'libs-release-local'
-            username = System.getenv('ARTIFACTORY_USER')
-            password = System.getenv('ARTIFACTORY_PASSWORD')
-        }
-        defaults {
-            publications('mavenJava')
-            publishArtifacts = true
-            publishPom = false
+        publish {
+            contextUrl = System.getenv('ARTIFACTORY_CONTEXT_URL')
+            repository {
+                repoKey = version.endsWith('SNAPSHOT') ? 'libs-snapshot-local' : 'libs-release-local'
+                username = System.getenv('ARTIFACTORY_USER')
+                password = System.getenv('ARTIFACTORY_PASSWORD')
+            }
+            defaults {
+                publications('mavenJava')
+                publishArtifacts = true
+                publishPom = false
+            }
         }
     }
 }
+
+
