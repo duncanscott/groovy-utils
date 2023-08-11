@@ -3,10 +3,15 @@ package duncanscott.org.groovy.http.duncanscott.org.groovy.http.util
 import org.apache.hc.client5.http.classic.methods.*
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient
 import org.apache.hc.client5.http.impl.classic.HttpClients
+import org.apache.hc.core5.http.ClassicHttpRequest
 import org.apache.hc.core5.http.HttpHeaders
+import org.apache.hc.core5.http.HttpHost
 import org.apache.hc.core5.http.io.entity.StringEntity
+import org.apache.hc.core5.http.io.support.ClassicRequestBuilder
 
 import java.lang.reflect.Constructor
+
+// https://hc.apache.org/httpcomponents-client-5.2.x/quickstart.html
 
 class HttpClient<K extends HttpResponse> {
 
@@ -25,39 +30,57 @@ class HttpClient<K extends HttpResponse> {
     }
 
     K get(String url) {
-        HttpGet httpGet = new HttpGet(url)
-        submitRequest(httpGet)
+        submitRequest(ClassicRequestBuilder.get(),url)
+    }
+
+    K get(String url, String text) {
+        ClassicRequestBuilder builder = ClassicRequestBuilder.get()
+        setBody(builder, text)
+        submitRequest(builder,url)
     }
 
     K post(String url) {
-        HttpPost httpPost = new HttpPost(url)
-        submitRequest(httpPost)
+        submitRequest(ClassicRequestBuilder.post(),url)
     }
 
     K post(String url, String text) {
-        HttpPost httpPost = new HttpPost(url)
-        setBody(httpPost, text)
-        submitRequest(httpPost)
+        ClassicRequestBuilder builder = ClassicRequestBuilder.post()
+        setBody(builder, text)
+        submitRequest(builder,url)
     }
 
     K put(String url) {
-        HttpPut httpPut = new HttpPut(url)
-        submitRequest(httpPut)
+        submitRequest(ClassicRequestBuilder.put(),url)
     }
 
     K put(String url, String text) {
-        HttpPut httpPut = new HttpPut(url)
-        setBody(httpPut, text)
-        submitRequest(httpPut)
+        ClassicRequestBuilder builder = ClassicRequestBuilder.put()
+        setBody(builder, text)
+        submitRequest(builder,url)
     }
 
     K delete(String url) {
-        HttpDelete httpDelete = new HttpDelete(url)
-        submitRequest(httpDelete)
+        submitRequest(ClassicRequestBuilder.delete(),url)
     }
 
-    private K submitRequest(HttpUriRequestBase request) {
-        addHeaders(request)
+    K delete(String url, String text) {
+        ClassicRequestBuilder builder = ClassicRequestBuilder.delete()
+        setBody(builder, text)
+        submitRequest(builder,url)
+    }
+
+    private K submitRequest(ClassicRequestBuilder requestBuilder, String url) {
+        URI uri = new URI(url)
+        String scheme = uri.scheme
+        String host = uri.host
+        int port = uri.port ?: -1
+
+        HttpHost httpHost = new HttpHost(scheme,host,port) // -1 is default port for scheme
+        requestBuilder.setHttpHost(httpHost)
+        requestBuilder.setUri(uri)
+        addHeaders(requestBuilder)
+
+        ClassicHttpRequest request = requestBuilder.build()
         K httpResponse = this.responseConstructor.newInstance()
         httpResponse.textResponse = RequestProcessor.submitRequest(request)
         httpResponse
@@ -67,17 +90,17 @@ class HttpClient<K extends HttpResponse> {
         HttpClients.createDefault()
     }
 
-    private static void setBody(HttpUriRequestBase request, String text) {
+    private static void setBody(ClassicRequestBuilder builder, String text) {
         StringEntity entity = new StringEntity(text)
-        request.setEntity(entity)
+        builder.setEntity(entity)
     }
 
-    private void addHeaders(HttpUriRequestBase request) {
+    private void addHeaders(ClassicRequestBuilder builder) {
         if (authorizationHeader) {
-            request.setHeader(HttpHeaders.AUTHORIZATION, authorizationHeader)
+            builder.setHeader(HttpHeaders.AUTHORIZATION, authorizationHeader)
         }
         defaultHeaders.each { RequestHeader header ->
-            request.setHeader(header.name, header.value)
+            builder.addHeader(header.name, header.value)
         }
     }
 

@@ -35,9 +35,9 @@ class HttpResponse {
         stringBuilder.append('(')
         if (requestUri) {
             stringBuilder.append(requestUri)
-            stringBuilder.append(';' + statusCode)
+            stringBuilder.append(':' + statusCode)
             if (reasonPhrase) {
-                stringBuilder.append(';' + reasonPhrase)
+                stringBuilder.append(':' + reasonPhrase)
             }
         }
         stringBuilder.append(')')

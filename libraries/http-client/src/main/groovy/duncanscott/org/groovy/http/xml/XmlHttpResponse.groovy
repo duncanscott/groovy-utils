@@ -9,9 +9,9 @@ class XmlHttpResponse extends HttpResponse {
     private final OnDemandCache<Node> cachedXml = new OnDemandCache<>()
 
     Node getXml() {
-        if (body != null) {
+        if (text != null) {
             return cachedXml.fetch {
-                new XmlParser().parse(this.text)
+                new XmlParser().parseText(text)
             }
         }
         return null

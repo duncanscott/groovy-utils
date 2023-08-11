@@ -12,7 +12,7 @@ class JsonHttpResponse extends HttpResponse {
     JSONObject getJson() {
         if (text != null) {
             return cachedJson.fetch {
-                new JSONParser().parse(this.text)
+                new JSONParser().parse(text)
             }
         }
         return null

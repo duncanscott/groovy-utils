@@ -2,6 +2,7 @@ package duncanscott.org.groovy.http.xml
 
 import duncanscott.org.groovy.http.duncanscott.org.groovy.http.util.HttpClient
 import duncanscott.org.groovy.http.duncanscott.org.groovy.http.util.RequestHeader
+import org.apache.hc.core5.http.HttpHeaders
 
 class XmlHttpClient extends HttpClient<XmlHttpResponse> {
 
