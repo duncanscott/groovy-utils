@@ -4,13 +4,14 @@ import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
 import spock.lang.Specification
-import java.time.ZoneId
+
 import java.time.LocalDate
+import java.time.ZoneId
 
 class DateUtilSpec extends Specification {
 
     private Date ldToDate(LocalDate localDate) {
-        return Date.from(localDate.atStartOfDay(ZoneId.of( "America/Los_Angeles" )).toInstant())
+        return Date.from(localDate.atStartOfDay(ZoneId.of("America/Los_Angeles")).toInstant())
     }
 
     void "test compareDateLists"() {

@@ -28,7 +28,6 @@ configure(javaProjects()) {
     }
 
     dependencies {
-        implementation group: 'org.apache.groovy', name: 'groovy', version: groovyVersion
         implementation group: 'org.slf4j', name: 'slf4j-api', version: sl4jVersion
         testRuntimeOnly group: 'ch.qos.logback', name: 'logback-classic', version: logbackVersion
         testRuntimeOnly group: 'ch.qos.logback', name: 'logback-core', version: logbackVersion

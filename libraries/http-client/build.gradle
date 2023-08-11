@@ -1,6 +1,10 @@
 dependencies {
+    api project(':libraries:on-demand-cache')
+
     api group: 'com.googlecode.json-simple', name: 'json-simple', version: jsonSimpleVersion
-    api group: 'org.apache.httpcomponents', name: 'httpclient', version: httpcomponentsVersion
+    api group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: httpComponentsVersion
+
+    implementation group: 'org.apache.groovy', name: 'groovy-all', version: groovyVersion
 }
 
 jar {

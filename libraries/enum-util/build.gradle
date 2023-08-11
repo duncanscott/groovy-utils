@@ -1,3 +1,7 @@
+dependencies {
+    implementation group: 'org.apache.groovy', name: 'groovy', version: groovyVersion
+}
+
 jar {
     manifest {
         attributes 'Implementation-Title': 'Enum Util', 'Implementation-Version': project.version

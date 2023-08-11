@@ -78,8 +78,8 @@ class JsonUtil {
                 Object existingVal = map[key]
                 if (isNull(existingVal)) {
                     map[key] = val
-                }  else if (existingVal instanceof Map && val instanceof Map) {
-                    mergeMapsNoReplace(existingVal,val)
+                } else if (existingVal instanceof Map && val instanceof Map) {
+                    mergeMapsNoReplace(existingVal, val)
                 } else if (throwErrorOnConflict) {
                     throw new RuntimeException("maps share key ${key}")
                 }
@@ -144,10 +144,10 @@ class JsonUtil {
 
     static JSONObject removeNulls(JSONObject json) {
         JSONObject clean = new JSONObject()
-        json.each { key,val ->
+        json.each { key, val ->
             if (val instanceof JSONObject) {
                 clean[key] = removeNulls(val)
-            } else if(!isNull(val)) {
+            } else if (!isNull(val)) {
                 clean[key] = val
             }
         }

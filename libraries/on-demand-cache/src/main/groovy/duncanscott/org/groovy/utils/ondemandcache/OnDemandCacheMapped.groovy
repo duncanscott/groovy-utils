@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap
 /**
  * Created by dscott on 3/4/14.
  */
-class OnDemandCacheMapped<K,V> {
+class OnDemandCacheMapped<K, V> {
 
     final boolean cacheNulls
 

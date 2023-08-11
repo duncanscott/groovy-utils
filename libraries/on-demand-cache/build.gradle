@@ -1,3 +1,7 @@
+dependencies {
+    implementation group: 'org.apache.groovy', name: 'groovy', version: groovyVersion
+}
+
 jar {
     manifest {
         attributes 'Implementation-Title': 'On Demand Cache', 'Implementation-Version': project.version

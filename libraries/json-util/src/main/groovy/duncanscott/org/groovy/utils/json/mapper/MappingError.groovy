@@ -19,7 +19,8 @@ class MappingError implements Comparable<MappingError> {
         if (!result) {
             try {
                 result = this.message <=> o.message
-            } catch(ignore){}
+            } catch (ignore) {
+            }
         }
         result
     }

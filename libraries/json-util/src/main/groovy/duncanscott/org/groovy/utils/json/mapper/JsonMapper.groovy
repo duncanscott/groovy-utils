@@ -11,9 +11,9 @@ class JsonMapper<K extends JsonMapper> {
     //these are elements (JSONObject or JSONArray) under keys that are not mapped to objects.
     OnDemandCacheMapped<String, JSONAware> cachedSections = new OnDemandCacheMapped<>(false)
 
-    private final OnDemandCacheMapped<String, Map<String,JsonMapper>> cachedChildObjects = new OnDemandCacheMapped<>()
-    private final OnDemandCacheMapped<String,List<JsonMapper>> cachedChildArrays = new OnDemandCacheMapped<>()
-    private final OnDemandCacheMapped<String,JsonMapper> cachedChildren = new OnDemandCacheMapped<>()
+    private final OnDemandCacheMapped<String, Map<String, JsonMapper>> cachedChildObjects = new OnDemandCacheMapped<>()
+    private final OnDemandCacheMapped<String, List<JsonMapper>> cachedChildArrays = new OnDemandCacheMapped<>()
+    private final OnDemandCacheMapped<String, JsonMapper> cachedChildren = new OnDemandCacheMapped<>()
 
     private final List<MappingError> mappingErrors = []
     final List<JsonMapper> children = []
@@ -40,7 +40,7 @@ class JsonMapper<K extends JsonMapper> {
 
     JsonMapper(JSONObject json, K parent, String key) {
         this.json = json
-        setParent(parent,key)
+        setParent(parent, key)
     }
 
     void setParent(K parent, String key) {
@@ -60,17 +60,17 @@ class JsonMapper<K extends JsonMapper> {
     }
 
     void addError(message) {
-        mappingErrors << new MappingError(this,message)
+        mappingErrors << new MappingError(this, message)
     }
 
-    Map<String,JsonMapper> childObjects(String key, Class<JsonMapper> clazz) {
+    Map<String, JsonMapper> childObjects(String key, Class<JsonMapper> clazz) {
         cachedChildObjects.fetch(key) {
-            Map<String,JsonMapper> keyChild = [:]
+            Map<String, JsonMapper> keyChild = [:]
             JSONObject subJson = objectSection(key)
             subJson.each { String k, JSONObject childJson ->
                 JsonMapper childMapper = clazz.newInstance()
                 childMapper.json = childJson
-                childMapper.setParent(this,key)
+                childMapper.setParent(this, key)
                 keyChild[k] = childMapper
             }
             keyChild
@@ -83,7 +83,7 @@ class JsonMapper<K extends JsonMapper> {
             arraySection(key)?.collect { JSONObject childJson ->
                 JsonMapper childMapper = clazz.newInstance()
                 childMapper.json = childJson
-                childMapper.setParent(this,key)
+                childMapper.setParent(this, key)
                 childMapper.index = arrayIndex++
                 return childMapper
             }
@@ -96,7 +96,7 @@ class JsonMapper<K extends JsonMapper> {
             if (childJson != null) {
                 JsonMapper childMapper = clazz.newInstance()
                 childMapper.json = childJson
-                childMapper.setParent(this,key)
+                childMapper.setParent(this, key)
                 return childMapper
             }
             return null
@@ -135,19 +135,19 @@ class JsonMapper<K extends JsonMapper> {
     }
 
     JSONObject createObject(String key) {
-        objectSection(key,true)
+        objectSection(key, true)
     }
 
     JSONObject getObject(String key) {
-        objectSection(key,false)
+        objectSection(key, false)
     }
 
     JSONArray createArray(String key) {
-        arraySection(key,true)
+        arraySection(key, true)
     }
 
     JSONArray getArray(String key) {
-        arraySection(key,false)
+        arraySection(key, false)
     }
 
     List<String> getKeyChain() {

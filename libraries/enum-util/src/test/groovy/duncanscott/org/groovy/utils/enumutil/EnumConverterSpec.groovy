@@ -29,13 +29,13 @@ class EnumConverterSpec extends Specification {
         converter1.toEnum('one') == TestEnumCaseSensitive.one
 
         when:
-        EnumConverter<TestEnumCaseInsensitive> converter2 = new EnumConverter<>(TestEnumCaseInsensitive,caseSensitive)
+        EnumConverter<TestEnumCaseInsensitive> converter2 = new EnumConverter<>(TestEnumCaseInsensitive, caseSensitive)
 
         then:
         converter2.toEnum('one') == TestEnumCaseInsensitive.ONE
 
         when:
-        EnumConverter<TestEnumCaseSensitive> converter3 = new EnumConverter<>(TestEnumCaseSensitive,caseSensitive)
+        EnumConverter<TestEnumCaseSensitive> converter3 = new EnumConverter<>(TestEnumCaseSensitive, caseSensitive)
         converter3.toEnum('one')
 
         then:

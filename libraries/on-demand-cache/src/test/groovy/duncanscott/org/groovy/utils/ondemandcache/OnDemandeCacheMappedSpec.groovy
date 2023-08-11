@@ -7,16 +7,16 @@ class OnDemandeCacheMappedSpec extends Specification {
     def "do not cache null"() {
         setup:
         boolean cacheNulls = false
-        OnDemandCacheMapped<String,String> onDemandCacheMapped = new OnDemandCacheMapped<>(cacheNulls)
+        OnDemandCacheMapped<String, String> onDemandCacheMapped = new OnDemandCacheMapped<>(cacheNulls)
 
         when:
-        onDemandCacheMapped.fetch('hello') {null}
+        onDemandCacheMapped.fetch('hello') { null }
 
         then:
         !onDemandCacheMapped.keySet()
 
         when:
-        onDemandCacheMapped.fetch('hello') {'world'}
+        onDemandCacheMapped.fetch('hello') { 'world' }
 
         then:
         onDemandCacheMapped.keySet().contains('hello')
@@ -25,16 +25,16 @@ class OnDemandeCacheMappedSpec extends Specification {
     def "do cache null"() {
         setup:
         boolean cacheNulls = true
-        OnDemandCacheMapped<String,String> onDemandCacheMapped = new OnDemandCacheMapped<>(cacheNulls)
+        OnDemandCacheMapped<String, String> onDemandCacheMapped = new OnDemandCacheMapped<>(cacheNulls)
 
         when:
-        onDemandCacheMapped.fetch('hello') {null}
+        onDemandCacheMapped.fetch('hello') { null }
 
         then:
         onDemandCacheMapped.keySet().contains('hello')
 
         when:
-        String who = onDemandCacheMapped.fetch('hello') {'world'}
+        String who = onDemandCacheMapped.fetch('hello') { 'world' }
 
         then:
         who == null

@@ -12,12 +12,13 @@ import java.text.SimpleDateFormat
 class DateUtil {
 
     static final String UTC = 'UTC'
-    static final TimeZone greenwichMeanTime = TimeZone.getTimeZone(UTC);
+    static final TimeZone greenwichMeanTime = TimeZone.getTimeZone(UTC)
 
     //aim for Javascript ISO date format:
     // e.g. "1993-07-28T21:39:07.000Z"       javascript Date.prototype.toISOString()
     //yyyy-MMM-dd HH:mm:ss.SSS (old format)
-    static final String dateFormatText = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"  //Quoted "Z" to indicate UTC, no timezone offset
+    static final String dateFormatText = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+    //Quoted "Z" to indicate UTC, no timezone offset
     static final SimpleDateFormat dateFormat = new SimpleDateFormat(dateFormatText)
     static {
         dateFormat.setTimeZone(greenwichMeanTime)
@@ -31,7 +32,7 @@ class DateUtil {
             Calendar.MINUTE,
             Calendar.SECOND,
             Calendar.MILLISECOND
-        ]
+    ]
 
     static Calendar getUtcCalendar() {
         Calendar c = Calendar.getInstance()
@@ -98,7 +99,7 @@ class DateUtil {
         Calendar c = utcCalendar
         if (timeValues) {
             Integer index = 0
-            Integer maxIndex = [timeValues.size(),calendarFields.size()].min()
+            Integer maxIndex = [timeValues.size(), calendarFields.size()].min()
             while (index < maxIndex) {
                 Integer timeValue = timeValues[index] as Integer
                 Integer calendarField = calendarFields[index]

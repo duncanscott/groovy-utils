@@ -12,7 +12,7 @@ class OnDemandeCacheSpec extends Specification {
         !onDemandCache.locked
 
         when:
-        onDemandCache.fetch {null}
+        onDemandCache.fetch { null }
 
         then:
         onDemandCache.locked

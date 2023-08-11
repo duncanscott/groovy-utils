@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicReference
 /**
  * Created by dscott on 2/11/14.
  */
-public class OnDemandCache<K> {
+class OnDemandCache<K> {
 
     private final AtomicReference<K> cachedObject = new AtomicReference<>()
     private final AtomicBoolean locked = new AtomicBoolean(false)

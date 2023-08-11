@@ -14,7 +14,7 @@ class EnumConverter<K extends Enum> {
     }
 
     EnumConverter(Class<K> enumType) {
-        this(enumType,true)
+        this(enumType, true)
     }
 
     private void populateConversionMap() {
