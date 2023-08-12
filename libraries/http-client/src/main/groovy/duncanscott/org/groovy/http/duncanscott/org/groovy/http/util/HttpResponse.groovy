@@ -5,8 +5,6 @@ import org.apache.hc.core5.http.HttpStatus
 
 class HttpResponse {
 
-    ClassicHttpRequest httpRequest
-
     TextResponse textResponse
 
     boolean getSuccess() {
@@ -15,6 +13,10 @@ class HttpResponse {
 
     String getRequestUri() {
         textResponse?.requestUri
+    }
+
+    String getRequestMethod() {
+        textResponse?.requestMethod
     }
 
     String getText() {

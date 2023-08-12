@@ -7,21 +7,23 @@ import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class RequestProcessor {
 
-    public static TextResponse submitRequest(ClassicHttpRequest httpRequest) throws IOException {
+    public static TextResponse submitRequest(ClassicHttpRequest httpRequest) throws IOException, URISyntaxException {
         TextResponse textResponse = new TextResponse();
         textResponse.requestUri = httpRequest.getRequestUri();
+        textResponse.requestMethod = httpRequest.getMethod();
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
             httpclient.execute(httpRequest, response -> {
                 textResponse.statusCode = response.getCode();
                 textResponse.reasonPhrase = response.getReasonPhrase();
                 textResponse.locale = response.getLocale();
 
-                final HttpEntity entity1 = response.getEntity();
-                textResponse.text = EntityUtils.toString(entity1);
-                EntityUtils.consume(entity1);
+                final HttpEntity entity = response.getEntity();
+                textResponse.text = EntityUtils.toString(entity);
+                EntityUtils.consume(entity);
                 return null;
             });
         }

@@ -89,7 +89,6 @@ class HttpClient<K extends HttpResponse> {
         addHeaders(requestBuilder)
         ClassicHttpRequest request = requestBuilder.build()
         K httpResponse = this.responseConstructor.newInstance()
-        httpResponse.httpRequest = request
         beforeRequest(request)
         httpResponse.textResponse = RequestProcessor.submitRequest(request)
         afterRequest(request, httpResponse)
