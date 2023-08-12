@@ -1,8 +1,11 @@
 package duncanscott.org.groovy.http.duncanscott.org.groovy.http.util
 
+import org.apache.hc.core5.http.ClassicHttpRequest
 import org.apache.hc.core5.http.HttpStatus
 
 class HttpResponse {
+
+    ClassicHttpRequest httpRequest
 
     TextResponse textResponse
 

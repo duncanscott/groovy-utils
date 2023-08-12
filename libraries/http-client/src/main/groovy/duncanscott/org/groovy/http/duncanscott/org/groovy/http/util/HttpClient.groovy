@@ -69,6 +69,14 @@ class HttpClient<K extends HttpResponse> {
         submitRequest(builder,url)
     }
 
+    void beforeRequest(ClassicHttpRequest httpRequest) {
+
+    }
+
+    void afterRequest(ClassicHttpRequest httpRequest, K httpResponse) {
+
+    }
+
     private K submitRequest(ClassicRequestBuilder requestBuilder, String url) {
         URI uri = new URI(url)
         String scheme = uri.scheme
@@ -79,10 +87,12 @@ class HttpClient<K extends HttpResponse> {
         requestBuilder.setHttpHost(httpHost)
         requestBuilder.setUri(uri)
         addHeaders(requestBuilder)
-
         ClassicHttpRequest request = requestBuilder.build()
         K httpResponse = this.responseConstructor.newInstance()
+        httpResponse.httpRequest = request
+        beforeRequest(request)
         httpResponse.textResponse = RequestProcessor.submitRequest(request)
+        afterRequest(request, httpResponse)
         httpResponse
     }
 

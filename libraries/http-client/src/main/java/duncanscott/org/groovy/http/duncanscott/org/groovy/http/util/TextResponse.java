@@ -4,10 +4,10 @@ import java.util.Locale;
 
 public class TextResponse {
 
-    String requestUri;
+    public String requestUri;
 
-    String text;
-    int statusCode;
-    String reasonPhrase;
-    Locale locale;
+    public String text;
+    public int statusCode;
+    public String reasonPhrase;
+    public Locale locale;
 }
