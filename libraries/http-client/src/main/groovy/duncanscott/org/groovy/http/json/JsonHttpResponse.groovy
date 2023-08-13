@@ -7,9 +7,12 @@ import org.json.simple.parser.JSONParser
 
 class JsonHttpResponse extends HttpResponse {
 
-    private final OnDemandCache<JSONObject> cachedJson = new OnDemandCache<>()
+    final OnDemandCache<JSONObject> cachedJson = new OnDemandCache<>()
 
     JSONObject getJson() {
+        if (cachedJson.cachedObject) {
+            return cachedJson.cachedObject
+        }
         if (text != null) {
             return cachedJson.fetch {
                 new JSONParser().parse(text)

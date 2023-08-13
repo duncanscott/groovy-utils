@@ -6,9 +6,12 @@ import groovy.xml.XmlParser
 
 class XmlHttpResponse extends HttpResponse {
 
-    private final OnDemandCache<Node> cachedXml = new OnDemandCache<>()
+    final OnDemandCache<Node> cachedXml = new OnDemandCache<>()
 
     Node getXml() {
+        if (cachedXml.cachedObject) {
+            return cachedXml.cachedObject
+        }
         if (text != null) {
             return cachedXml.fetch {
                 new XmlParser().parseText(text)
