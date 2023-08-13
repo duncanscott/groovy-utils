@@ -8,17 +8,41 @@ class HttpResponse {
     @Delegate TextResponse textResponse
 
     boolean getSuccess() {
-        textResponse?.statusCode in [HttpStatus.SC_CREATED, HttpStatus.SC_OK]
+        statusCode in [HttpStatus.SC_CREATED, HttpStatus.SC_OK]
+    }
+
+    String getRequestUri() {
+        textResponse?.requestUri
+    }
+
+    String getRequestMethod() {
+        textResponse?.requestMethod
+    }
+
+    String getText() {
+        textResponse?.text
+    }
+
+    int getStatusCode() {
+        textResponse ? textResponse.statusCode : 0
+    }
+
+    String getReasonPhrase() {
+        textResponse?.reasonPhrase
+    }
+
+    Locale getLocal() {
+        textResponse?.locale
     }
 
     String toString() {
         StringBuilder stringBuilder = new StringBuilder(this.class.simpleName)
         stringBuilder.append('(')
-        if (textResponse?.requestUri) {
-            stringBuilder.append(textResponse?.requestUri)
-            stringBuilder.append(':' + textResponse.statusCode)
+        if (requestUri) {
+            stringBuilder.append(requestUri)
+            stringBuilder.append(':' + statusCode)
             if (reasonPhrase) {
-                stringBuilder.append(':' + textResponse.reasonPhrase)
+                stringBuilder.append(':' + reasonPhrase)
             }
         }
         stringBuilder.append(')')
