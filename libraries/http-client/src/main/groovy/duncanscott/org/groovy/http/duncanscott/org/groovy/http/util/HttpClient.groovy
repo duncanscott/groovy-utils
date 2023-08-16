@@ -97,10 +97,13 @@ class HttpClient<K extends HttpResponse> {
     }
 
     private ClassicHttpRequest prepareRequest(ClassicRequestBuilder requestBuilder, String url) {
+        if (!url) throw new InvalidUrlException()
         URI uri = new URI(url)
         String scheme = uri.scheme
         String host = uri.host
         int port = uri.port ?: -1
+        if (!scheme) throw new InvalidUrlException(url, "null scheme for URL [${url}]")
+        if (!host) throw new InvalidUrlException(url, "null host for URL [${url}]")
 
         HttpHost httpHost = new HttpHost(scheme, host, port) // -1 is default port for scheme
         requestBuilder.setHttpHost(httpHost)
