@@ -5,6 +5,8 @@ dependencies {
     api group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: httpComponentsVersion
 
     implementation group: 'org.apache.groovy', name: 'groovy-all', version: groovyVersion
+    // https://mvnrepository.com/artifact/com.google.guava/guava
+    implementation group: 'com.google.guava', name: 'guava', version: guavaVersion
 }
 
 jar {

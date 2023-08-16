@@ -1,9 +1,11 @@
-package duncanscott.org.groovy.http.duncanscott.org.groovy.http.util
+package duncanscott.org.groovy.http.duncanscott.org.groovy.http.client
 
-import org.apache.hc.client5.http.entity.EntityBuilder
+import duncanscott.org.groovy.http.duncanscott.org.groovy.http.handler.InputStreamHandler
+import duncanscott.org.groovy.http.duncanscott.org.groovy.util.InvalidUrlException
+import duncanscott.org.groovy.http.duncanscott.org.groovy.util.RequestHeader
+import duncanscott.org.groovy.http.duncanscott.org.groovy.util.RequestProcessor
 import org.apache.hc.core5.http.ClassicHttpRequest
 import org.apache.hc.core5.http.ContentType
-import org.apache.hc.core5.http.HttpEntity
 import org.apache.hc.core5.http.HttpHeaders
 import org.apache.hc.core5.http.HttpHost
 import org.apache.hc.core5.http.io.entity.InputStreamEntity

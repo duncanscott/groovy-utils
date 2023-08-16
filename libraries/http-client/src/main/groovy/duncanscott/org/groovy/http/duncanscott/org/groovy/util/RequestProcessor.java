@@ -1,5 +1,6 @@
-package duncanscott.org.groovy.http.duncanscott.org.groovy.http.util;
+package duncanscott.org.groovy.http.duncanscott.org.groovy.util;
 
+import duncanscott.org.groovy.http.duncanscott.org.groovy.http.handler.InputStreamHandler;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ClassicHttpRequest;

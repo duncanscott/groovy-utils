@@ -1,6 +1,6 @@
-package duncanscott.org.groovy.http.json
+package duncanscott.org.groovy.http.duncanscott.org.groovy.http.client.json
 
-import duncanscott.org.groovy.http.duncanscott.org.groovy.http.util.HttpResponse
+import duncanscott.org.groovy.http.duncanscott.org.groovy.http.client.HttpResponse
 import duncanscott.org.groovy.utils.ondemandcache.OnDemandCache
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
