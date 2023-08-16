@@ -4,8 +4,10 @@ import duncanscott.org.groovy.http.duncanscott.org.groovy.http.handler.InputStre
 import duncanscott.org.groovy.http.duncanscott.org.groovy.util.InvalidUrlException
 import duncanscott.org.groovy.http.duncanscott.org.groovy.util.RequestHeader
 import duncanscott.org.groovy.http.duncanscott.org.groovy.util.RequestProcessor
+import org.apache.hc.client5.http.entity.EntityBuilder
 import org.apache.hc.core5.http.ClassicHttpRequest
 import org.apache.hc.core5.http.ContentType
+import org.apache.hc.core5.http.HttpEntity
 import org.apache.hc.core5.http.HttpHeaders
 import org.apache.hc.core5.http.HttpHost
 import org.apache.hc.core5.http.io.entity.InputStreamEntity
@@ -194,8 +196,9 @@ class HttpClient<K extends HttpResponse> {
         //entityBuilder.setStream(inputStream)
         //entityBuilder.setContentType(ContentType.APPLICATION_OCTET_STREAM)
         //HttpEntity entity = entityBuilder.build()
-        InputStreamEntity reqEntity = new InputStreamEntity(inputStream, -1, ContentType.APPLICATION_OCTET_STREAM);
-        builder.setEntity(reqEntity)
+        HttpEntity entity = EntityBuilder.create().setStream(inputStream).setContentType(ContentType.APPLICATION_OCTET_STREAM).build()
+        //InputStreamEntity reqEntity = new InputStreamEntity(inputStream, -1, ContentType.APPLICATION_OCTET_STREAM);
+        builder.setEntity(entity)
     }
 
     private static void setBody(ClassicRequestBuilder builder, String text) {
