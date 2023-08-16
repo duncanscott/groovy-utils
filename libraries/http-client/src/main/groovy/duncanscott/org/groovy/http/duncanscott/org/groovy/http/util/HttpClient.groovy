@@ -43,7 +43,7 @@ class HttpClient<K extends HttpResponse> {
 
     K get(String url, InputStreamHandler inputStreamHandler) {
         ClassicRequestBuilder builder = ClassicRequestBuilder.get()
-        submitRequest(builder, url)
+        submitRequest(builder, url, inputStreamHandler)
     }
 
     K post(String url) {
