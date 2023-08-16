@@ -1,9 +1,13 @@
 package duncanscott.org.groovy.http.duncanscott.org.groovy.http.util
 
-import org.apache.hc.client5.http.classic.methods.*
+import duncanscott.org.groovy.http.util.RequestProcessor
+import org.apache.hc.client5.http.entity.EntityBuilder
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient
 import org.apache.hc.client5.http.impl.classic.HttpClients
 import org.apache.hc.core5.http.ClassicHttpRequest
+import org.apache.hc.core5.http.ContentType
+import org.apache.hc.core5.http.HttpEntity
 import org.apache.hc.core5.http.HttpHeaders
 import org.apache.hc.core5.http.HttpHost
 import org.apache.hc.core5.http.io.entity.StringEntity
@@ -49,8 +53,20 @@ class HttpClient<K extends HttpResponse> {
         submitRequest(builder,url)
     }
 
+    K post(String url, InputStream inputStream) {
+        ClassicRequestBuilder builder = ClassicRequestBuilder.post()
+        setInputStream(builder,inputStream)
+        submitRequest(builder,url)
+    }
+
     K put(String url) {
         submitRequest(ClassicRequestBuilder.put(),url)
+    }
+
+    K put(String url, InputStream inputStream) {
+        ClassicRequestBuilder builder = ClassicRequestBuilder.put()
+        setInputStream(builder,inputStream)
+        submitRequest(builder,url)
     }
 
     K put(String url, String text) {
@@ -97,6 +113,13 @@ class HttpClient<K extends HttpResponse> {
 
     private static CloseableHttpClient getHttpClient() {
         HttpClients.createDefault()
+    }
+
+    private static void setInputStream(ClassicRequestBuilder builder, InputStream inputStream) {
+        EntityBuilder entityBuilder = EntityBuilder.create()
+        entityBuilder.setStream(inputStream)
+        HttpEntity entity = entityBuilder.build()
+        builder.setEntity(entity)
     }
 
     private static void setBody(ClassicRequestBuilder builder, String text) {
