@@ -2,9 +2,11 @@ package duncanscott.org.groovy.http.duncanscott.org.groovy.http.util
 
 import org.apache.hc.client5.http.entity.EntityBuilder
 import org.apache.hc.core5.http.ClassicHttpRequest
+import org.apache.hc.core5.http.ContentType
 import org.apache.hc.core5.http.HttpEntity
 import org.apache.hc.core5.http.HttpHeaders
 import org.apache.hc.core5.http.HttpHost
+import org.apache.hc.core5.http.io.entity.InputStreamEntity
 import org.apache.hc.core5.http.io.entity.StringEntity
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder
 
@@ -186,10 +188,12 @@ class HttpClient<K extends HttpResponse> {
     }
 
     private static void setInputStream(ClassicRequestBuilder builder, InputStream inputStream) {
-        EntityBuilder entityBuilder = EntityBuilder.create()
-        entityBuilder.setStream(inputStream)
-        HttpEntity entity = entityBuilder.build()
-        builder.setEntity(entity)
+        //EntityBuilder entityBuilder = EntityBuilder.create()
+        //entityBuilder.setStream(inputStream)
+        //entityBuilder.setContentType(ContentType.APPLICATION_OCTET_STREAM)
+        //HttpEntity entity = entityBuilder.build()
+        InputStreamEntity reqEntity = new InputStreamEntity(inputStream, -1, ContentType.APPLICATION_OCTET_STREAM);
+        builder.setEntity(reqEntity)
     }
 
     private static void setBody(ClassicRequestBuilder builder, String text) {
