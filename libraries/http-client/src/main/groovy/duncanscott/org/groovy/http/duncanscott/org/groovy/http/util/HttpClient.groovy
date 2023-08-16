@@ -2,11 +2,9 @@ package duncanscott.org.groovy.http.duncanscott.org.groovy.http.util
 
 import duncanscott.org.groovy.http.util.RequestProcessor
 import org.apache.hc.client5.http.entity.EntityBuilder
-import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient
 import org.apache.hc.client5.http.impl.classic.HttpClients
 import org.apache.hc.core5.http.ClassicHttpRequest
-import org.apache.hc.core5.http.ContentType
 import org.apache.hc.core5.http.HttpEntity
 import org.apache.hc.core5.http.HttpHeaders
 import org.apache.hc.core5.http.HttpHost
@@ -34,55 +32,55 @@ class HttpClient<K extends HttpResponse> {
     }
 
     K get(String url) {
-        submitRequest(ClassicRequestBuilder.get(),url)
+        submitRequest(ClassicRequestBuilder.get(), url)
     }
 
     K get(String url, String text) {
         ClassicRequestBuilder builder = ClassicRequestBuilder.get()
         setBody(builder, text)
-        submitRequest(builder,url)
+        submitRequest(builder, url)
     }
 
     K post(String url) {
-        submitRequest(ClassicRequestBuilder.post(),url)
+        submitRequest(ClassicRequestBuilder.post(), url)
     }
 
     K post(String url, String text) {
         ClassicRequestBuilder builder = ClassicRequestBuilder.post()
         setBody(builder, text)
-        submitRequest(builder,url)
+        submitRequest(builder, url)
     }
 
     K post(String url, InputStream inputStream) {
         ClassicRequestBuilder builder = ClassicRequestBuilder.post()
-        setInputStream(builder,inputStream)
-        submitRequest(builder,url)
+        setInputStream(builder, inputStream)
+        submitRequest(builder, url)
     }
 
     K put(String url) {
-        submitRequest(ClassicRequestBuilder.put(),url)
+        submitRequest(ClassicRequestBuilder.put(), url)
     }
 
     K put(String url, InputStream inputStream) {
         ClassicRequestBuilder builder = ClassicRequestBuilder.put()
-        setInputStream(builder,inputStream)
-        submitRequest(builder,url)
+        setInputStream(builder, inputStream)
+        submitRequest(builder, url)
     }
 
     K put(String url, String text) {
         ClassicRequestBuilder builder = ClassicRequestBuilder.put()
         setBody(builder, text)
-        submitRequest(builder,url)
+        submitRequest(builder, url)
     }
 
     K delete(String url) {
-        submitRequest(ClassicRequestBuilder.delete(),url)
+        submitRequest(ClassicRequestBuilder.delete(), url)
     }
 
     K delete(String url, String text) {
         ClassicRequestBuilder builder = ClassicRequestBuilder.delete()
         setBody(builder, text)
-        submitRequest(builder,url)
+        submitRequest(builder, url)
     }
 
     void beforeRequest(ClassicHttpRequest httpRequest) {
@@ -99,7 +97,7 @@ class HttpClient<K extends HttpResponse> {
         String host = uri.host
         int port = uri.port ?: -1
 
-        HttpHost httpHost = new HttpHost(scheme,host,port) // -1 is default port for scheme
+        HttpHost httpHost = new HttpHost(scheme, host, port) // -1 is default port for scheme
         requestBuilder.setHttpHost(httpHost)
         requestBuilder.setUri(uri)
         addHeaders(requestBuilder)

@@ -5,7 +5,8 @@ import org.apache.hc.core5.http.HttpStatus
 
 class HttpResponse {
 
-    @Delegate TextResponse textResponse
+    @Delegate
+    TextResponse textResponse
 
     boolean getSuccess() {
         statusCode in [HttpStatus.SC_CREATED, HttpStatus.SC_OK]
