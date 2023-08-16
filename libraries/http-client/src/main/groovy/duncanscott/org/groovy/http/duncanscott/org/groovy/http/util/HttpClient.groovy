@@ -1,6 +1,6 @@
 package duncanscott.org.groovy.http.duncanscott.org.groovy.http.util
 
-import duncanscott.org.groovy.http.util.RequestProcessor
+
 import org.apache.hc.client5.http.entity.EntityBuilder
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient
 import org.apache.hc.client5.http.impl.classic.HttpClients
@@ -38,6 +38,11 @@ class HttpClient<K extends HttpResponse> {
     K get(String url, String text) {
         ClassicRequestBuilder builder = ClassicRequestBuilder.get()
         setBody(builder, text)
+        submitRequest(builder, url)
+    }
+
+    K get(String url, InputStreamHandler inputStreamHandler) {
+        ClassicRequestBuilder builder = ClassicRequestBuilder.get()
         submitRequest(builder, url)
     }
 
@@ -91,7 +96,7 @@ class HttpClient<K extends HttpResponse> {
 
     }
 
-    private K submitRequest(ClassicRequestBuilder requestBuilder, String url) {
+    private ClassicHttpRequest prepareRequest(ClassicRequestBuilder requestBuilder, String url) {
         URI uri = new URI(url)
         String scheme = uri.scheme
         String host = uri.host
@@ -101,10 +106,23 @@ class HttpClient<K extends HttpResponse> {
         requestBuilder.setHttpHost(httpHost)
         requestBuilder.setUri(uri)
         addHeaders(requestBuilder)
-        ClassicHttpRequest request = requestBuilder.build()
+        requestBuilder.build()
+    }
+
+    private K submitRequest(ClassicRequestBuilder requestBuilder, String url) {
+        ClassicHttpRequest request = prepareRequest(requestBuilder,url)
         K httpResponse = this.responseConstructor.newInstance()
         beforeRequest(request)
         httpResponse.textResponse = RequestProcessor.submitRequest(request)
+        afterRequest(request, httpResponse)
+        httpResponse
+    }
+
+    private K submitRequest(ClassicRequestBuilder requestBuilder, String url, InputStreamHandler inputStreamHandler) {
+        ClassicHttpRequest request = prepareRequest(requestBuilder,url)
+        K httpResponse = this.responseConstructor.newInstance()
+        beforeRequest(request)
+        httpResponse.textResponse = RequestProcessor.submitRequest(request,inputStreamHandler)
         afterRequest(request, httpResponse)
         httpResponse
     }
