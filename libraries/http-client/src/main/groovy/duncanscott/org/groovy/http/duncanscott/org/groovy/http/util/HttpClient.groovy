@@ -1,9 +1,6 @@
 package duncanscott.org.groovy.http.duncanscott.org.groovy.http.util
 
-
 import org.apache.hc.client5.http.entity.EntityBuilder
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient
-import org.apache.hc.client5.http.impl.classic.HttpClients
 import org.apache.hc.core5.http.ClassicHttpRequest
 import org.apache.hc.core5.http.HttpEntity
 import org.apache.hc.core5.http.HttpHeaders
@@ -32,59 +29,84 @@ class HttpClient<K extends HttpResponse> {
     }
 
     K get(String url) {
-        submitRequest(ClassicRequestBuilder.get(), url)
+        ClassicRequestBuilder builder = ClassicRequestBuilder.get()
+        addHeaders(builder, defaultHeaders)
+        submitRequest(builder, url)
     }
 
     K get(String url, String text) {
         ClassicRequestBuilder builder = ClassicRequestBuilder.get()
         setBody(builder, text)
+        addHeaders(builder, defaultHeaders)
         submitRequest(builder, url)
     }
 
-    K get(String url, InputStreamHandler inputStreamHandler) {
+    /**
+     *
+     * @param url
+     * @param inputStreamHandler
+     * @param headers
+     * @return
+     *
+     * The defaultHeaders are not applied when this signature of get is called.  (The authorization header
+     * if defined is applied.)  Specify and headers for the request in the headers method param.
+     */
+    K get(String url, InputStreamHandler inputStreamHandler, Collection<RequestHeader> headers = null) {
         ClassicRequestBuilder builder = ClassicRequestBuilder.get()
+        addHeaders(builder, headers)
         submitRequest(builder, url, inputStreamHandler)
     }
 
     K post(String url) {
-        submitRequest(ClassicRequestBuilder.post(), url)
+        ClassicRequestBuilder builder = ClassicRequestBuilder.post()
+        addHeaders(builder, defaultHeaders)
+        submitRequest(builder, url)
     }
 
     K post(String url, String text) {
         ClassicRequestBuilder builder = ClassicRequestBuilder.post()
         setBody(builder, text)
+        addHeaders(builder, defaultHeaders)
         submitRequest(builder, url)
     }
 
-    K post(String url, InputStream inputStream) {
+    K post(String url, InputStream inputStream, Collection<RequestHeader> headers = null) {
         ClassicRequestBuilder builder = ClassicRequestBuilder.post()
         setInputStream(builder, inputStream)
+        addHeaders(builder, headers)
         submitRequest(builder, url)
     }
 
     K put(String url) {
-        submitRequest(ClassicRequestBuilder.put(), url)
+        ClassicRequestBuilder builder = ClassicRequestBuilder.put()
+        addHeaders(builder, defaultHeaders)
+        submitRequest(builder, url)
     }
 
-    K put(String url, InputStream inputStream) {
+    K put(String url, InputStream inputStream, Collection<RequestHeader> headers = null) {
         ClassicRequestBuilder builder = ClassicRequestBuilder.put()
         setInputStream(builder, inputStream)
+        addHeaders(builder, headers)
         submitRequest(builder, url)
     }
 
     K put(String url, String text) {
         ClassicRequestBuilder builder = ClassicRequestBuilder.put()
         setBody(builder, text)
+        addHeaders(builder, defaultHeaders)
         submitRequest(builder, url)
     }
 
     K delete(String url) {
-        submitRequest(ClassicRequestBuilder.delete(), url)
+        ClassicRequestBuilder builder = ClassicRequestBuilder.delete()
+        addHeaders(builder, defaultHeaders)
+        submitRequest(builder, url)
     }
 
     K delete(String url, String text) {
         ClassicRequestBuilder builder = ClassicRequestBuilder.delete()
         setBody(builder, text)
+        addHeaders(builder, defaultHeaders)
         submitRequest(builder, url)
     }
 
@@ -96,7 +118,7 @@ class HttpClient<K extends HttpResponse> {
 
     }
 
-    private ClassicHttpRequest prepareRequest(ClassicRequestBuilder requestBuilder, String url) {
+    private static void prepareRequest(ClassicRequestBuilder requestBuilder, String url) {
         if (!url) throw new InvalidUrlException()
         URI uri = new URI(url)
         String scheme = uri.scheme
@@ -108,12 +130,11 @@ class HttpClient<K extends HttpResponse> {
         HttpHost httpHost = new HttpHost(scheme, host, port) // -1 is default port for scheme
         requestBuilder.setHttpHost(httpHost)
         requestBuilder.setUri(uri)
-        addHeaders(requestBuilder)
-        requestBuilder.build()
     }
 
     private K submitRequest(ClassicRequestBuilder requestBuilder, String url) {
-        ClassicHttpRequest request = prepareRequest(requestBuilder,url)
+        prepareRequest(requestBuilder, url)
+        ClassicHttpRequest request = requestBuilder.build()
         K httpResponse = this.responseConstructor.newInstance()
         beforeRequest(request)
         httpResponse.textResponse = RequestProcessor.submitRequest(request)
@@ -122,16 +143,13 @@ class HttpClient<K extends HttpResponse> {
     }
 
     private K submitRequest(ClassicRequestBuilder requestBuilder, String url, InputStreamHandler inputStreamHandler) {
-        ClassicHttpRequest request = prepareRequest(requestBuilder,url)
+        prepareRequest(requestBuilder, url)
+        ClassicHttpRequest request = requestBuilder.build()
         K httpResponse = this.responseConstructor.newInstance()
         beforeRequest(request)
-        httpResponse.textResponse = RequestProcessor.submitRequest(request,inputStreamHandler)
+        httpResponse.textResponse = RequestProcessor.submitRequest(request, inputStreamHandler)
         afterRequest(request, httpResponse)
         httpResponse
-    }
-
-    private static CloseableHttpClient getHttpClient() {
-        HttpClients.createDefault()
     }
 
     private static void setInputStream(ClassicRequestBuilder builder, InputStream inputStream) {
@@ -146,11 +164,11 @@ class HttpClient<K extends HttpResponse> {
         builder.setEntity(entity)
     }
 
-    private void addHeaders(ClassicRequestBuilder builder) {
+    private void addHeaders(ClassicRequestBuilder builder, Collection<RequestHeader> headers) {
         if (authorizationHeader) {
             builder.setHeader(HttpHeaders.AUTHORIZATION, authorizationHeader)
         }
-        defaultHeaders.each { RequestHeader header ->
+        headers?.each { RequestHeader header ->
             builder.addHeader(header.name, header.value)
         }
     }

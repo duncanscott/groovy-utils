@@ -5,7 +5,6 @@ import org.apache.hc.core5.http.HttpStatus
 
 class HttpResponse {
 
-    @Delegate
     TextResponse textResponse
 
     boolean getSuccess() {
