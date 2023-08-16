@@ -34,13 +34,6 @@ class HttpClient<K extends HttpResponse> {
         submitRequest(builder, url)
     }
 
-    K get(String url, String text) {
-        ClassicRequestBuilder builder = ClassicRequestBuilder.get()
-        setBody(builder, text)
-        addHeaders(builder, defaultHeaders)
-        submitRequest(builder, url)
-    }
-
     /**
      *
      * @param url
@@ -57,10 +50,30 @@ class HttpClient<K extends HttpResponse> {
         submitRequest(builder, url, inputStreamHandler)
     }
 
+    K get(String url, String text) {
+        ClassicRequestBuilder builder = ClassicRequestBuilder.get()
+        setBody(builder, text)
+        addHeaders(builder, defaultHeaders)
+        submitRequest(builder, url)
+    }
+
+    K get(String url, String text, InputStreamHandler inputStreamHandler, Collection<RequestHeader> headers = null) {
+        ClassicRequestBuilder builder = ClassicRequestBuilder.get()
+        setBody(builder, text)
+        addHeaders(builder, headers)
+        submitRequest(builder, url, inputStreamHandler)
+    }
+
     K post(String url) {
         ClassicRequestBuilder builder = ClassicRequestBuilder.post()
         addHeaders(builder, defaultHeaders)
         submitRequest(builder, url)
+    }
+
+    K post(String url, InputStreamHandler inputStreamHandler, Collection<RequestHeader> headers = null) {
+        ClassicRequestBuilder builder = ClassicRequestBuilder.post()
+        addHeaders(builder, headers)
+        submitRequest(builder, url, inputStreamHandler)
     }
 
     K post(String url, String text) {
@@ -68,6 +81,13 @@ class HttpClient<K extends HttpResponse> {
         setBody(builder, text)
         addHeaders(builder, defaultHeaders)
         submitRequest(builder, url)
+    }
+
+    K post(String url, String text, InputStreamHandler inputStreamHandler, Collection<RequestHeader> headers = null) {
+        ClassicRequestBuilder builder = ClassicRequestBuilder.post()
+        setBody(builder, text)
+        addHeaders(builder, headers)
+        submitRequest(builder, url, inputStreamHandler)
     }
 
     K post(String url, InputStream inputStream, Collection<RequestHeader> headers = null) {
@@ -83,6 +103,12 @@ class HttpClient<K extends HttpResponse> {
         submitRequest(builder, url)
     }
 
+    K put(String url, InputStreamHandler inputStreamHandler, Collection<RequestHeader> headers = null) {
+        ClassicRequestBuilder builder = ClassicRequestBuilder.put()
+        addHeaders(builder, headers)
+        submitRequest(builder, url, inputStreamHandler)
+    }
+
     K put(String url, InputStream inputStream, Collection<RequestHeader> headers = null) {
         ClassicRequestBuilder builder = ClassicRequestBuilder.put()
         setInputStream(builder, inputStream)
@@ -95,6 +121,13 @@ class HttpClient<K extends HttpResponse> {
         setBody(builder, text)
         addHeaders(builder, defaultHeaders)
         submitRequest(builder, url)
+    }
+
+    K put(String url, String text, InputStreamHandler inputStreamHandler, Collection<RequestHeader> headers = null) {
+        ClassicRequestBuilder builder = ClassicRequestBuilder.put()
+        setBody(builder, text)
+        addHeaders(builder, headers)
+        submitRequest(builder, url, inputStreamHandler)
     }
 
     K delete(String url) {
