@@ -1,11 +1,11 @@
-package duncanscott.org.groovy.http.duncanscott.org.groovy.http.client.json
+package duncanscott.org.groovy.http.client.json
 
-import duncanscott.org.groovy.http.duncanscott.org.groovy.http.client.HttpResponse
+
 import duncanscott.org.groovy.utils.ondemandcache.OnDemandCache
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
 
-class JsonHttpResponse extends HttpResponse {
+class JsonHttpResponse extends duncanscott.org.groovy.http.client.HttpResponse {
 
     final OnDemandCache<JSONObject> cachedJson = new OnDemandCache<>()
 

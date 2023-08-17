@@ -1,7 +1,7 @@
 package duncanscott.org.groovy.http.xml
 
-import duncanscott.org.groovy.http.duncanscott.org.groovy.http.client.xml.XmlHttpClient
-import duncanscott.org.groovy.http.duncanscott.org.groovy.http.client.xml.XmlHttpResponse
+import duncanscott.org.groovy.http.client.xml.XmlHttpClient
+import duncanscott.org.groovy.http.client.xml.XmlHttpResponse
 import spock.lang.Specification
 
 class XmlHttpClientIntegrationSpec extends Specification {

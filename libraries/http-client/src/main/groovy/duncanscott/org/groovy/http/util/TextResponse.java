@@ -1,4 +1,4 @@
-package duncanscott.org.groovy.http.duncanscott.org.groovy.util;
+package duncanscott.org.groovy.http.util;
 
 import java.util.Locale;
 

@@ -1,6 +1,7 @@
-package duncanscott.org.groovy.http.duncanscott.org.groovy.http.client
+package duncanscott.org.groovy.http.client
 
-import duncanscott.org.groovy.http.duncanscott.org.groovy.util.TextResponse
+
+import duncanscott.org.groovy.http.util.TextResponse
 import org.apache.hc.core5.http.HttpStatus
 
 class HttpResponse {

@@ -1,4 +1,4 @@
-package duncanscott.org.groovy.http.duncanscott.org.groovy.http.handler
+package duncanscott.org.groovy.http.handler
 
 import com.google.common.io.ByteStreams
 
@@ -11,7 +11,7 @@ class InputStreamToOutputStream implements InputStreamHandler {
     }
 
     void call(InputStream inputStream) {
-        ByteStreams.copy(inputStream,outputStream)
+        ByteStreams.copy(inputStream, outputStream)
     }
 
 }

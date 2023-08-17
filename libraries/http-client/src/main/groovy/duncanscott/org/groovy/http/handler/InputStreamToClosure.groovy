@@ -1,4 +1,4 @@
-package duncanscott.org.groovy.http.duncanscott.org.groovy.http.handler
+package duncanscott.org.groovy.http.handler
 
 class InputStreamToClosure implements InputStreamHandler {
 
@@ -11,5 +11,5 @@ class InputStreamToClosure implements InputStreamHandler {
     void call(InputStream inputStream) {
         closure.call(inputStream)
     }
-    
+
 }
