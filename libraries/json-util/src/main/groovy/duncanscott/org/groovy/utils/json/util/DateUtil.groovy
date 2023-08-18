@@ -49,11 +49,11 @@ class DateUtil {
     }
 
     static String dateToString(Date date) {
-        dateFormat.format(date)
+        date ? dateFormat.format(date) : null
     }
 
     static Date stringToDate(String dateString) {
-        dateFormat.parse(dateString)
+        dateString ? dateFormat.parse(dateString) : null
     }
 
     static int compareDateLists(List date1, List date2) {
