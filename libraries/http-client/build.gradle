@@ -1,5 +1,6 @@
 dependencies {
     api project(':libraries:on-demand-cache')
+    api project(':libraries:java-util')
 
     api group: 'com.googlecode.json-simple', name: 'json-simple', version: jsonSimpleVersion
     api group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: httpComponentsVersion

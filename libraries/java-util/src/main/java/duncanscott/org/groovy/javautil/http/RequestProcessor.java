@@ -1,6 +1,5 @@
-package duncanscott.org.groovy.http.util;
+package duncanscott.org.groovy.javautil.http;
 
-import duncanscott.org.groovy.http.handler.InputStreamHandler;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ClassicHttpRequest;
@@ -23,8 +22,11 @@ public class RequestProcessor {
                 textResponse.locale = response.getLocale();
 
                 final HttpEntity entity = response.getEntity();
-                textResponse.text = EntityUtils.toString(entity);
-                EntityUtils.consume(entity);
+                try {
+                    textResponse.text = EntityUtils.toString(entity);
+                } finally {
+                    EntityUtils.consume(entity);
+                }
                 return null;
             });
         }
@@ -41,10 +43,13 @@ public class RequestProcessor {
                 textResponse.reasonPhrase = response.getReasonPhrase();
                 textResponse.locale = response.getLocale();
                 final HttpEntity entity = response.getEntity();
-                try (InputStream inputStream = entity.getContent()) {
-                    inputStreamHandler.call(inputStream);
+                try {
+                    try (InputStream inputStream = entity.getContent()) {
+                        inputStreamHandler.call(inputStream);
+                    }
+                } finally {
+                    EntityUtils.consume(entity);
                 }
-                EntityUtils.consume(entity);
                 return null;
             });
         }

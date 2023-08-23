@@ -1,4 +1,4 @@
-package duncanscott.org.groovy.http.client.json
+package duncanscott.org.groovy.http.json
 
 
 import duncanscott.org.groovy.utils.ondemandcache.OnDemandCache

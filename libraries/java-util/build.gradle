@@ -1,0 +1,9 @@
+dependencies {
+    api group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: httpComponentsVersion
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Java Util', 'Implementation-Version': project.version
+    }
+}

@@ -1,4 +1,4 @@
-package duncanscott.org.groovy.http.client.xml
+package duncanscott.org.groovy.http.xml
 
 import duncanscott.org.groovy.http.client.HttpClient
 import duncanscott.org.groovy.http.util.RequestHeader

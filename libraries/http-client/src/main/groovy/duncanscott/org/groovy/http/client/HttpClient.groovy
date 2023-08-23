@@ -1,10 +1,10 @@
 package duncanscott.org.groovy.http.client
 
 import duncanscott.org.groovy.http.client.HttpResponse
-import duncanscott.org.groovy.http.handler.InputStreamHandler
 import duncanscott.org.groovy.http.util.InvalidUrlException
 import duncanscott.org.groovy.http.util.RequestHeader
-import duncanscott.org.groovy.http.util.RequestProcessor
+import duncanscott.org.groovy.javautil.http.InputStreamHandler
+import duncanscott.org.groovy.javautil.http.RequestProcessor
 import org.apache.hc.client5.http.entity.EntityBuilder
 import org.apache.hc.core5.http.*
 import org.apache.hc.core5.http.io.entity.StringEntity

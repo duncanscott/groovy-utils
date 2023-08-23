@@ -1,4 +1,4 @@
-package duncanscott.org.groovy.http.util;
+package duncanscott.org.groovy.javautil.http;
 
 import java.util.Locale;
 
@@ -11,4 +11,5 @@ public class TextResponse {
     public int statusCode;
     public String reasonPhrase;
     public Locale locale;
+
 }
