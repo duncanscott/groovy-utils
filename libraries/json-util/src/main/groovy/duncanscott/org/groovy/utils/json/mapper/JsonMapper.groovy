@@ -1,15 +1,14 @@
 package duncanscott.org.groovy.utils.json.mapper
 
 import duncanscott.org.groovy.utils.ondemandcache.OnDemandCacheMapped
-import org.json.simple.JSONArray
-import org.json.simple.JSONAware
-import org.json.simple.JSONObject
+import org.json.JSONArray
+import org.json.JSONObject
 
 
 class JsonMapper<K extends JsonMapper> {
 
     //these are elements (JSONObject or JSONArray) under keys that are not mapped to objects.
-    OnDemandCacheMapped<String, JSONAware> cachedSections = new OnDemandCacheMapped<>(false)
+    OnDemandCacheMapped<String, Object> cachedSections = new OnDemandCacheMapped<>(false)
 
     private final OnDemandCacheMapped<String, Map<String, JsonMapper>> cachedChildObjects = new OnDemandCacheMapped<>()
     private final OnDemandCacheMapped<String, List<JsonMapper>> cachedChildArrays = new OnDemandCacheMapped<>()

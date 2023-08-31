@@ -1,9 +1,8 @@
 package duncanscott.org.groovy.utils.json.util
 
 import groovy.util.logging.Slf4j
-import org.json.simple.JSONArray
-import org.json.simple.JSONAware
-import org.json.simple.JSONObject
+import org.json.JSONArray
+import org.json.JSONObject
 
 /**
  * Created by dscott on 1/23/2015.
@@ -65,11 +64,7 @@ class JsonUtil {
     }
 
     static String toString(Object o) {
-        if (o instanceof JSONAware) {
-            return o.toJSONString()
-        } else {
-            return "${o}"
-        }
+        return "${o}"
     }
 
     static void mergeMapsNoReplace(Map map, Map mapToMerge, boolean throwErrorOnConflict = false) {

@@ -1,7 +1,7 @@
 package duncanscott.org.groovy.utils.json.util
 
 import groovy.util.logging.Slf4j
-import org.json.simple.JSONArray
+import org.json.JSONArray
 
 import java.text.SimpleDateFormat
 
@@ -56,7 +56,7 @@ class DateUtil {
         dateString ? dateFormat.parse(dateString) : null
     }
 
-    static int compareDateLists(List date1, List date2) {
+    static int compareDateLists(JSONArray date1, JSONArray date2) {
         if (!date1 || !date2) {
             log.error 'NULL date passed to compareDateLists'
             if (date1) {
@@ -89,7 +89,7 @@ class DateUtil {
             Calendar c = utcCalendar
             c.setTime(date)
             calendarFields.each { Integer calendarField ->
-                json << c.get(calendarField)
+                json.put(c.get(calendarField))
             }
         }
         return json

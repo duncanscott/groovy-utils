@@ -2,8 +2,8 @@ package duncanscott.org.groovy.utils.json.util
 
 import groovy.util.logging.Slf4j
 import org.codehaus.groovy.runtime.StackTraceUtils
-import org.json.simple.JSONArray
-import org.json.simple.JSONObject
+import org.json.JSONArray
+import org.json.JSONObject
 
 /**
  * Created by duncanscott on 1/3/15.
