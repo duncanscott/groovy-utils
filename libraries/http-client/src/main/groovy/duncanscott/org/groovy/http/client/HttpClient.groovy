@@ -192,7 +192,7 @@ class HttpClient<K extends HttpResponse> {
         builder.setEntity(entity)
     }
 
-    private static void setBody(ClassicRequestBuilder builder, String text) {
+    void setBody(ClassicRequestBuilder builder, String text) {
         StringEntity entity = new StringEntity(text)
         builder.setEntity(entity)
     }
