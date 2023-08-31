@@ -1,10 +1,10 @@
 package duncanscott.org.groovy.http.xml
 
-
+import duncanscott.org.groovy.http.client.HttpResponse
 import duncanscott.org.groovy.utils.ondemandcache.OnDemandCache
 import groovy.xml.XmlParser
 
-class XmlHttpResponse extends duncanscott.org.groovy.http.client.HttpResponse {
+class XmlHttpResponse extends HttpResponse {
 
     final OnDemandCache<Node> cachedXml = new OnDemandCache<>()
 

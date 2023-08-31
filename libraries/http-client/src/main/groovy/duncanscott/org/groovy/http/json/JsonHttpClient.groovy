@@ -1,10 +1,10 @@
 package duncanscott.org.groovy.http.json
 
-
+import duncanscott.org.groovy.http.client.HttpClient
 import duncanscott.org.groovy.http.util.RequestHeader
 import org.apache.hc.core5.http.HttpHeaders
 
-class JsonHttpClient extends duncanscott.org.groovy.http.client.HttpClient<JsonHttpResponse> {
+class JsonHttpClient extends HttpClient<JsonHttpResponse> {
 
     JsonHttpClient() {
         super(JsonHttpResponse)
