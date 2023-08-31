@@ -2,8 +2,7 @@ package duncanscott.org.groovy.http.json
 
 import duncanscott.org.groovy.http.client.HttpResponse
 import duncanscott.org.groovy.utils.ondemandcache.OnDemandCache
-import org.json.simple.JSONObject
-import org.json.simple.parser.JSONParser
+import org.json.JSONObject
 
 class JsonHttpResponse extends HttpResponse {
 
@@ -15,7 +14,7 @@ class JsonHttpResponse extends HttpResponse {
         }
         if (text != null) {
             return cachedJson.fetch {
-                new JSONParser().parse(text)
+                new JSONObject(text)
             }
         }
         return null
