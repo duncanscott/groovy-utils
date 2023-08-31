@@ -26,7 +26,7 @@ class XmlHttpClient extends HttpClient<XmlHttpResponse> {
     }
 
     void setBody(ClassicRequestBuilder builder, String text) {
-        StringEntity entity = new StringEntity(text, ContentType.APPLICATION_XML, 'UTF-8', false)
+        StringEntity entity = new StringEntity(text, ContentType.APPLICATION_XML)
         builder.setEntity(entity)
     }
 }

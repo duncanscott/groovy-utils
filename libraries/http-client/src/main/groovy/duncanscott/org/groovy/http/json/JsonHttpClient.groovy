@@ -33,7 +33,7 @@ class JsonHttpClient extends HttpClient<JsonHttpResponse> {
     }
 
     void setBody(ClassicRequestBuilder builder, String text) {
-        StringEntity entity = new StringEntity(text, ContentType.APPLICATION_JSON, 'UTF-8', false)
+        StringEntity entity = new StringEntity(text, ContentType.APPLICATION_JSON)
         builder.setEntity(entity)
     }
 
