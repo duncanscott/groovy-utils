@@ -29,13 +29,4 @@ class JsonHttpClient extends HttpClient<JsonHttpResponse> {
         defaultHeaders.add(new RequestHeader(HttpHeaders.CONTENT_TYPE, 'application/json'))
     }
 
-    static String toUtf8(String text) {
-        ByteBuffer buffer = StandardCharsets.UTF_8.encode(text);
-        return StandardCharsets.UTF_8.decode(buffer).toString();
-    }
-
-    void setBody(ClassicRequestBuilder builder, String text) {
-        StringEntity entity = new StringEntity(toUtf8(text))
-        builder.setEntity(entity)
-    }
 }

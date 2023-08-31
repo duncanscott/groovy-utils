@@ -153,7 +153,7 @@ class HttpClient<K extends HttpResponse> {
 
     }
 
-    private static void prepareRequest(ClassicRequestBuilder requestBuilder, String url) {
+    void prepareRequest(ClassicRequestBuilder requestBuilder, String url) {
         if (!url) throw new InvalidUrlException()
         URI uri = new URI(url)
         String scheme = uri.scheme
@@ -167,7 +167,7 @@ class HttpClient<K extends HttpResponse> {
         requestBuilder.setUri(uri)
     }
 
-    private K submitRequest(ClassicRequestBuilder requestBuilder, String url) {
+    K submitRequest(ClassicRequestBuilder requestBuilder, String url) {
         prepareRequest(requestBuilder, url)
         ClassicHttpRequest request = requestBuilder.build()
         K httpResponse = this.responseConstructor.newInstance()
@@ -177,7 +177,7 @@ class HttpClient<K extends HttpResponse> {
         httpResponse
     }
 
-    private K submitRequest(ClassicRequestBuilder requestBuilder, String url, InputStreamHandler inputStreamHandler) {
+    K submitRequest(ClassicRequestBuilder requestBuilder, String url, InputStreamHandler inputStreamHandler) {
         prepareRequest(requestBuilder, url)
         ClassicHttpRequest request = requestBuilder.build()
         K httpResponse = this.responseConstructor.newInstance()
@@ -187,7 +187,7 @@ class HttpClient<K extends HttpResponse> {
         httpResponse
     }
 
-    private static void setInputStream(ClassicRequestBuilder builder, InputStream inputStream) {
+    void setInputStream(ClassicRequestBuilder builder, InputStream inputStream) {
         HttpEntity entity = EntityBuilder.create().setStream(inputStream).setContentType(ContentType.APPLICATION_OCTET_STREAM).build()
         builder.setEntity(entity)
     }
@@ -197,7 +197,7 @@ class HttpClient<K extends HttpResponse> {
         builder.setEntity(entity)
     }
 
-    private void addHeaders(ClassicRequestBuilder builder, Collection<RequestHeader> headers) {
+    void addHeaders(ClassicRequestBuilder builder, Collection<RequestHeader> headers) {
         if (authorizationHeader) {
             builder.setHeader(HttpHeaders.AUTHORIZATION, authorizationHeader)
         }
