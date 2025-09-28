@@ -3,6 +3,7 @@ package duncanscott.org.groovy.http.client
 import duncanscott.org.groovy.http.util.InvalidUrlException
 import duncanscott.org.groovy.http.util.RequestHeader
 import duncanscott.org.groovy.javautil.http.InputStreamHandler
+import duncanscott.org.groovy.javautil.http.TextResponse
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient
 import org.apache.hc.client5.http.impl.classic.HttpClients
 import org.apache.hc.core5.http.ClassicHttpRequest
@@ -116,23 +117,24 @@ class HttpClient<K extends HttpResponse> implements Closeable {
         // 3. Build and execute
         ClassicHttpRequest request = requestBuilder.build()
         K httpResponse = responseConstructor.newInstance()
-        httpResponse.requestUri = request.getRequestUri()
-        httpResponse.requestMethod = request.getMethod()
+        TextResponse textResponse = new TextResponse()
+        textResponse.requestUri = request.getUri().toString()
+        textResponse.requestMethod = request.getMethod()
 
         beforeRequest(request)
 
         internalClient.execute(request, {
             response ->
-                httpResponse.statusCode = response.getCode()
-                httpResponse.reasonPhrase = response.getReasonPhrase()
-                httpResponse.locale = response.getLocale()
+                textResponse.statusCode = response.getCode()
+                textResponse.reasonPhrase = response.getReasonPhrase()
+                textResponse.locale = response.getLocale()
 
                 final HttpEntity entity = response.getEntity()
                 try {
                     if (streamHandler != null) {
                         entity.getContent().withStream(streamHandler.&call)
                     } else {
-                        httpResponse.text = EntityUtils.toString(entity)
+                        textResponse.text = EntityUtils.toString(entity)
                     }
                 } finally {
                     EntityUtils.consume(entity)
@@ -140,6 +142,7 @@ class HttpClient<K extends HttpResponse> implements Closeable {
                 return null
         })
 
+        httpResponse.textResponse = textResponse
         afterRequest(request, httpResponse)
         return httpResponse
     }
