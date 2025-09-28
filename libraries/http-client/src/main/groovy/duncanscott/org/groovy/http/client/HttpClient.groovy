@@ -1,6 +1,6 @@
 package duncanscott.org.groovy.http.client
 
-import duncanscott.org.groovy.http.client.HttpResponse
+
 import duncanscott.org.groovy.http.util.InvalidUrlException
 import duncanscott.org.groovy.http.util.RequestHeader
 import duncanscott.org.groovy.javautil.http.InputStreamHandler

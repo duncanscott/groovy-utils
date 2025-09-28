@@ -14,9 +14,9 @@ class JsonHttpResponse extends HttpResponse {
             return cachedJson.cachedObject
         }
         if (text != null) {
-            return cachedJson.fetch {
+            return cachedJson.fetch(({
                 new JSONParser().parse(text)
-            }
+            } as Closure<JSONObject>))
         }
         return null
     }
