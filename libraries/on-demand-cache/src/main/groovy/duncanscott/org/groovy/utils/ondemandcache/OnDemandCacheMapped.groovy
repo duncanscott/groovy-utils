@@ -1,7 +1,6 @@
 package duncanscott.org.groovy.utils.ondemandcache
 
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.atomic.AtomicReference
 
 /**
  * Created by dscott on 3/4/14.
