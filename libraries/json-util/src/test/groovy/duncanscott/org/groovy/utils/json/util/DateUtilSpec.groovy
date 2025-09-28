@@ -1,14 +1,14 @@
 package duncanscott.org.groovy.utils.json.util
 
-import org.json.simple.JSONArray
-import org.json.simple.JSONObject
-import org.json.simple.parser.JSONParser
+import com.fasterxml.jackson.databind.ObjectMapper
 import spock.lang.Specification
 
 import java.time.LocalDate
 import java.time.ZoneId
 
 class DateUtilSpec extends Specification {
+
+    private static final ObjectMapper MAPPER = new ObjectMapper()
 
     private Date ldToDate(LocalDate localDate) {
         return Date.from(localDate.atStartOfDay(ZoneId.of("America/Los_Angeles")).toInstant())
@@ -19,13 +19,13 @@ class DateUtilSpec extends Specification {
         LocalDate baseDate = LocalDate.now()
         Date date1 = ldToDate(baseDate)
         Date date2 = ldToDate(baseDate.plusDays(1))
-        JSONArray dateList1 = DateUtil.dateToJsonArray(date1)
-        JSONArray dateList2 = DateUtil.dateToJsonArray(date2)
-        JSONObject jsonObject1 = new JSONObject()
+        List<Integer> dateList1 = DateUtil.dateToJsonArray(date1)
+        List<Integer> dateList2 = DateUtil.dateToJsonArray(date2)
+        Map<String, Object> jsonObject1 = new LinkedHashMap<>()
         jsonObject1['date-1'] = dateList1
         jsonObject1['date-2'] = dateList2
-        String jsonText = jsonObject1.toString()
-        JSONObject jsonObject2 = (JSONObject) new JSONParser().parse(jsonText)
+        String jsonText = MAPPER.writeValueAsString(jsonObject1)
+        Map<String, Object> jsonObject2 = MAPPER.readValue(jsonText, Map.class)
 
         expect:
         -1 == DateUtil.compareDateLists(dateList1, dateList2)

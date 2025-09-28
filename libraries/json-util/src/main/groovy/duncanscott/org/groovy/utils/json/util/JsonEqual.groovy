@@ -2,8 +2,6 @@ package duncanscott.org.groovy.utils.json.util
 
 import groovy.util.logging.Slf4j
 import org.codehaus.groovy.runtime.StackTraceUtils
-import org.json.simple.JSONArray
-import org.json.simple.JSONObject
 
 /**
  * Created by duncanscott on 1/3/15.
@@ -13,7 +11,7 @@ class JsonEqual {
 
     static boolean areEqual(o1, o2) {
         try {
-            if (o1 instanceof JSONObject && o2 instanceof JSONObject) {
+            if (o1 instanceof Map && o2 instanceof Map) {
                 log.debug "comparing:\n${o1}\n${o2}"
             }
             checkElementsEqual(o1, o2)
@@ -38,14 +36,14 @@ class JsonEqual {
         return false
     }
 
-    private static void checkObjectsEqual(JSONObject o1, JSONObject o2) {
+    private static void checkObjectsEqual(Map o1, Map o2) {
         (o1.keySet() + o2.keySet()).each { key ->
             log "checking map values equal for key ${key}: ${o1[key]} ${o2[key]}"
             checkElementsEqual(o1[key], o2[key])
         }
     }
 
-    private static void checkArraysEqual(JSONArray a1, JSONArray a2) {
+    private static void checkArraysEqual(List a1, List a2) {
         log "checking arrays 1: ${a1}"
         log "checking arrays 2: ${a2}"
         if (a1.size() != a2.size()) {
@@ -65,16 +63,16 @@ class JsonEqual {
         if (e1.is(e2)) {
             return
         }
-        if (e1 instanceof JSONObject || e2 instanceof JSONObject) {
-            if (e1 instanceof JSONObject && e2 instanceof JSONObject) {
-                checkObjectsEqual(e1, e2)
+        if (e1 instanceof Map || e2 instanceof Map) {
+            if (e1 instanceof Map && e2 instanceof Map) {
+                checkObjectsEqual((Map)e1, (Map)e2)
                 return
             }
             throw new NotEqualException(e1, e2)
         }
-        if (e1 instanceof JSONArray || e2 instanceof JSONArray) {
-            if (e1 instanceof JSONArray && e2 instanceof JSONArray) {
-                checkArraysEqual(e1, e2)
+        if (e1 instanceof List || e2 instanceof List) {
+            if (e1 instanceof List && e2 instanceof List) {
+                checkArraysEqual((List)e1, (List)e2)
                 return
             }
             throw new NotEqualException(e1, e2)

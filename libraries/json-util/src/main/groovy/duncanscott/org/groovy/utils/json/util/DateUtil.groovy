@@ -1,7 +1,6 @@
 package duncanscott.org.groovy.utils.json.util
 
 import groovy.util.logging.Slf4j
-import org.json.simple.JSONArray
 
 import java.text.SimpleDateFormat
 
@@ -44,7 +43,7 @@ class DateUtil {
         dateToString(new Date())
     }
 
-    static JSONArray nowToJsonArray() {
+    static List<Integer> nowToJsonArray() {
         dateToJsonArray(new Date())
     }
 
@@ -82,10 +81,10 @@ class DateUtil {
         return result
     }
 
-    static JSONArray dateToJsonArray(Date date = new Date()) {
-        JSONArray json = null
+    static List<Integer> dateToJsonArray(Date date = new Date()) {
+        List<Integer> json = null
         if (date) {
-            json = new JSONArray()
+            json = new ArrayList<>()
             Calendar c = utcCalendar
             c.setTime(date)
             calendarFields.each { Integer calendarField ->

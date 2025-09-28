@@ -1,15 +1,15 @@
 package duncanscott.org.groovy.utils.json.util
 
+import com.fasterxml.jackson.core.JsonProcessingException
+import com.fasterxml.jackson.databind.ObjectMapper
+import groovy.lang.GroovyObject
+import groovy.lang.MetaClass
 import groovy.util.logging.Slf4j
-import org.json.simple.JSONArray
-import org.json.simple.JSONAware
-import org.json.simple.JSONObject
 
-/**
- * Created by dscott on 1/23/2015.
- */
 @Slf4j
 class JsonUtil {
+
+    private static final ObjectMapper MAPPER = new ObjectMapper()
 
     static boolean isNull(Object obj) {
         return obj == null
@@ -20,19 +20,19 @@ class JsonUtil {
     }
 
     static Set<String> extractPropertiesToExclude(Object obj = null) {
-        Set<String> propertiesToExclude = null
+        Set<String> propertiesToExclude
         if (obj == null) {
-            propertiesToExclude = Object.metaClass.properties*.name.toSet()
+            propertiesToExclude = Object.metaClass.properties*.name as Set
         } else if (obj instanceof MetaClass) {
-            propertiesToExclude = obj.properties*.name.toSet()
+            propertiesToExclude = ((MetaClass) obj).properties*.name as Set
         } else if (obj instanceof Iterable) {
-            propertiesToExclude = []
-            obj.each { propertyToExclude ->
-                propertiesToExclude += extractPropertiesToExclude(propertyToExclude)
+            propertiesToExclude = new HashSet<String>()
+            ((Iterable)obj).each { propertyToExclude ->
+                propertiesToExclude.addAll(extractPropertiesToExclude(propertyToExclude))
             }
         } else if (obj instanceof CharSequence) {
-            propertiesToExclude = []
-            propertiesToExclude << obj.toString()
+            propertiesToExclude = new HashSet<String>()
+            propertiesToExclude.add(obj.toString())
         } else {
             propertiesToExclude = extractPropertiesToExclude(obj.metaClass)
         }
@@ -40,9 +40,9 @@ class JsonUtil {
     }
 
 
-    static JSONObject groovyObjectToJson(GroovyObject obj, Object propertiesToScreenOut = null) {
+    static Map<String, Object> groovyObjectToJson(GroovyObject obj, Object propertiesToScreenOut = null) {
         log.debug "converting groovy object ${obj} to JSON"
-        JSONObject jsonObj = new JSONObject()
+        Map<String, Object> jsonObj = new LinkedHashMap<>()
         if (obj != null) {
             Set<String> propertiesToExclude = extractPropertiesToExclude(propertiesToScreenOut)
             obj.metaClass.properties*.name.each { String name ->
@@ -54,7 +54,7 @@ class JsonUtil {
                     }
                     log.debug "converting property ${name} to JSON"
                     Object jsonVal = toJson(propVal)
-                    if (jsonVal != null && !((jsonVal instanceof JSONArray && !jsonVal) || (jsonVal instanceof JSONObject && !jsonVal))) {
+                    if (jsonVal != null && !((jsonVal instanceof List && ((List)jsonVal).isEmpty()) || (jsonVal instanceof Map && ((Map)jsonVal).isEmpty()))) {
                         log.debug "returned value is of class ${jsonVal.class?.name}"
                         jsonObj[jsonName] = jsonVal
                     }
@@ -65,10 +65,11 @@ class JsonUtil {
     }
 
     static String toString(Object o) {
-        if (o instanceof JSONAware) {
-            return o.toJSONString()
-        } else {
-            return "${o}"
+        try {
+            return MAPPER.writeValueAsString(o)
+        } catch (JsonProcessingException e) {
+            log.warn("Failed to serialize object to JSON string, falling back to toString()", e)
+            return o.toString()
         }
     }
 
@@ -79,7 +80,7 @@ class JsonUtil {
                 if (isNull(existingVal)) {
                     map[key] = val
                 } else if (existingVal instanceof Map && val instanceof Map) {
-                    mergeMapsNoReplace(existingVal, val)
+                    mergeMapsNoReplace((Map)existingVal, (Map)val, throwErrorOnConflict)
                 } else if (throwErrorOnConflict) {
                     throw new RuntimeException("maps share key ${key}")
                 }
@@ -97,10 +98,10 @@ class JsonUtil {
             return DateUtil.dateToString((Date) obj)
         }
         if (obj instanceof Map) {
-            return toJsonObject(obj)
+            return toJsonObject((Map)obj)
         }
         if (obj instanceof Iterable) {
-            return toJsonArray(obj)
+            return toJsonArray((Iterable)obj)
         }
         if (obj instanceof Number) {
             return obj
@@ -112,17 +113,14 @@ class JsonUtil {
             return obj.booleanValue()
         }
         if (obj instanceof GroovyObject) {
-            return groovyObjectToJson(obj)
+            return groovyObjectToJson((GroovyObject)obj)
         }
         return "$obj".toString()
     }
 
 
-    static JSONObject toJsonObject(Map obj) {
-        if (obj instanceof JSONObject) {
-            return obj
-        }
-        JSONObject json = new JSONObject()
+    static Map<String, Object> toJsonObject(Map obj) {
+        Map<String, Object> json = new LinkedHashMap<>()
         obj?.each { key, val ->
             json["${key}"] = toJson(val)
         }
@@ -130,11 +128,8 @@ class JsonUtil {
     }
 
 
-    static JSONArray toJsonArray(Iterable obj) {
-        if (obj instanceof JSONArray) {
-            return obj
-        }
-        JSONArray json = new JSONArray()
+    static List<Object> toJsonArray(Iterable obj) {
+        List<Object> json = new ArrayList<>()
         obj?.each { val ->
             json << toJson(val)
         }
@@ -142,11 +137,11 @@ class JsonUtil {
     }
 
 
-    static JSONObject removeNulls(JSONObject json) {
-        JSONObject clean = new JSONObject()
+    static Map<String, Object> removeNulls(Map<String, Object> json) {
+        Map<String, Object> clean = new LinkedHashMap<>()
         json.each { key, val ->
-            if (val instanceof JSONObject) {
-                clean[key] = removeNulls(val)
+            if (val instanceof Map) {
+                clean[key] = removeNulls((Map)val)
             } else if (!isNull(val)) {
                 clean[key] = val
             }
