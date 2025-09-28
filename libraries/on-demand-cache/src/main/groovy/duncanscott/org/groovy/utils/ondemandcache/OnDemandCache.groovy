@@ -1,65 +1,58 @@
 package duncanscott.org.groovy.utils.ondemandcache
 
-/**
- * Compute-once, cache-forever (per instance) with simple single-flight semantics.
- * Thread-safe via synchronized methods only (no atomics needed).
- *
- * NOTE: This version **caches nulls**. If you don't want that, see the comment in cacheClosureOutput().
- */
 class OnDemandCache<K> {
 
-    private K cachedObject
-    private boolean locked
+    private static final Object NULL_SENTINEL = new Object()
+    private volatile Object cachedObject
 
-    OnDemandCache() {}
-
-    synchronized void forceCache(K value) {
-        cachedObject = value
-        locked = true
-    }
-
-    synchronized void cache(K value) {
-        if (!locked) {
-            cachedObject = value
-            locked = true
+    void forceCache(K objectToCache) {
+        synchronized (this) {
+            cachedObject = (objectToCache == null) ? NULL_SENTINEL : objectToCache
         }
     }
 
-    synchronized void cacheClosureOutput(Closure<? extends K> closure) {
-        if (!locked) {
-            K v = closure.call()
-            // If you do NOT want to cache nulls, use:
-            // if (v != null) { cachedObject = v; locked = true }
-            // else leave 'locked' false so another attempt can compute later.
-            cachedObject = v
-            locked = true
+    void cache(K objectToCache) {
+        if (cachedObject == null) {
+            synchronized (this) {
+                if (cachedObject == null) {
+                    cachedObject = (objectToCache == null) ? NULL_SENTINEL : objectToCache
+                }
+            }
         }
     }
 
-    /**
-     * Computes (once) using the supplied closure and returns the cached value thereafter.
-     * If the closure throws, nothing is cached and the exception propagates.
-     */
-    K fetch(Closure<? extends K> fetchClosure) {
-        if (!isLocked()) {
-            cacheClosureOutput(fetchClosure)   // synchronized inside
+    void cacheClosureOutput(Closure<K> closure) {
+        if (cachedObject == null) {
+            synchronized (this) {
+                if (cachedObject == null) {
+                    def obj = closure.call()
+                    cachedObject = (obj == null) ? NULL_SENTINEL : obj
+                }
+            }
         }
-        return getCachedObject()               // synchronized getter below
     }
 
-    /** Required: expose the cached object directly. */
-    synchronized K getCachedObject() {
-        return cachedObject
+    K fetch(Closure<K> fetchClosure) {
+        def value = cachedObject
+        if (value == null) {
+            cacheClosureOutput(fetchClosure)
+            value = cachedObject
+        }
+        return (value == NULL_SENTINEL) ? null : (K) value
     }
 
-    synchronized void clear() {
-        cachedObject = null
-        locked = false
+    K getCachedObject() {
+        def value = cachedObject
+        return (value == NULL_SENTINEL) ? null : (K) value
     }
 
-    /** Bean-style accessor (preferred). */
-    synchronized boolean isLocked() {
-        return locked
+    void clear() {
+        synchronized (this) {
+            cachedObject = null
+        }
     }
 
+    boolean getLocked() {
+        cachedObject != null
+    }
 }
