@@ -1,5 +1,8 @@
 package duncanscott.org.groovy.utils.ondemandcache
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 class OnDemandCache<K> {
 
     private static final Object NULL_SENTINEL = new Object()
@@ -25,7 +28,7 @@ class OnDemandCache<K> {
         if (cachedObject == null) {
             synchronized (this) {
                 if (cachedObject == null) {
-                    def obj = closure.call()
+                    K obj = closure.call()
                     cachedObject = (obj == null) ? NULL_SENTINEL : obj
                 }
             }
@@ -33,7 +36,7 @@ class OnDemandCache<K> {
     }
 
     K fetch(Closure<K> fetchClosure) {
-        def value = cachedObject
+        Object value = cachedObject
         if (value == null) {
             cacheClosureOutput(fetchClosure)
             value = cachedObject
@@ -42,7 +45,7 @@ class OnDemandCache<K> {
     }
 
     K getCachedObject() {
-        def value = cachedObject
+        Object value = cachedObject
         return (value == NULL_SENTINEL) ? null : (K) value
     }
 

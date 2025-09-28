@@ -1,5 +1,7 @@
 package duncanscott.org.groovy.utils.ondemandcache
 
+import groovy.transform.CompileStatic
+
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -8,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @param <K> The type of the keys.
  * @param <V> The type of the values.
  */
+@CompileStatic
 class OnDemandCacheMapped<K, V> {
 
     final boolean cacheNulls
@@ -31,12 +34,12 @@ class OnDemandCacheMapped<K, V> {
     private V fetchCacheNulls(K input, Closure<V> fetchClosure) {
         // This is clean and correct. computeIfAbsent is atomic.
         // The underlying OnDemandCache handles caching nulls correctly.
-        return cacheMap.computeIfAbsent(input) { k -> new OnDemandCache<V>() }.fetch(fetchClosure)
+        return cacheMap.computeIfAbsent(input) { K k -> new OnDemandCache<V>() }.fetch(fetchClosure)
     }
 
     private V fetchDoNotCacheNulls(K input, Closure<V> fetchClosure) {
         // Get or create the cache instance atomically.
-        OnDemandCache<V> cache = cacheMap.computeIfAbsent(input) { k -> new OnDemandCache<V>() }
+        OnDemandCache<V> cache = cacheMap.computeIfAbsent(input) { K k -> new OnDemandCache<V>() }
         V value = cache.fetch(fetchClosure)
 
         if (value == null) {
