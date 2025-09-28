@@ -1,6 +1,7 @@
 package duncanscott.org.groovy.utils.ondemandcache
 
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * Created by dscott on 3/4/14.
@@ -19,22 +20,23 @@ class OnDemandCacheMapped<K, V> {
         this.cacheNulls = true
     }
 
-    V fetch(K input, Closure<V> fetchClosure) {
-        V fetchedObject = null
-        OnDemandCache<V> onDemandCache = cacheMap.get(input)
-        if (onDemandCache == null) {
-            onDemandCache = new OnDemandCache<>()
-            if (cacheNulls) {
-                cacheMap.putIfAbsent(input, onDemandCache)
-            }
-            fetchedObject = onDemandCache.fetch(fetchClosure)
-            if (!cacheNulls && fetchedObject != null) {
-                cacheMap.putIfAbsent(input, onDemandCache)
-            }
-        } else {
-            fetchedObject = onDemandCache.fetch(fetchClosure)
+    private V fetchCacheNulls(K input, Closure<V> fetchClosure) {
+        return cacheMap.computeIfAbsent(input) { k -> new OnDemandCache<V>() }.fetch(fetchClosure)
+    }
+
+    V fetchDoNotCacheNulls(K input, Closure<V> fetchClosure) {
+        V out = null
+        cacheMap.compute(input) { k, existing ->
+            def c = existing ?: new OnDemandCache<V>()
+            def v = c.fetch(fetchClosure)
+            out = v
+            (v != null) ? c : existing
         }
-        fetchedObject
+        return out
+    }
+
+    V fetch(K input, Closure<V> fetchClosure) {
+        cacheNulls ? fetchCacheNulls(input, fetchClosure) : fetchDoNotCacheNulls(input, fetchClosure)
     }
 
     OnDemandCache<V> remove(K key) {

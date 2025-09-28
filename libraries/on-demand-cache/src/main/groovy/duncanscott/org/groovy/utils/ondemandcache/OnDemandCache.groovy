@@ -1,55 +1,65 @@
 package duncanscott.org.groovy.utils.ondemandcache
 
-import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.atomic.AtomicReference
-
 /**
- * Created by dscott on 2/11/14.
+ * Compute-once, cache-forever (per instance) with simple single-flight semantics.
+ * Thread-safe via synchronized methods only (no atomics needed).
+ *
+ * NOTE: This version **caches nulls**. If you don't want that, see the comment in cacheClosureOutput().
  */
 class OnDemandCache<K> {
 
-    private final AtomicReference<K> cachedObject = new AtomicReference<>()
-    private final AtomicBoolean locked = new AtomicBoolean(false)
+    private K cachedObject
+    private boolean locked
 
     OnDemandCache() {}
 
-    synchronized void forceCache(K objectToCache) {
-        cachedObject.set(objectToCache)
-        locked.set(true)
+    synchronized void forceCache(K value) {
+        cachedObject = value
+        locked = true
     }
 
-    synchronized void cache(K objectToCache) {
-        if (!locked.get()) {
-            cachedObject.set(objectToCache)
-            locked.set(true)
+    synchronized void cache(K value) {
+        if (!locked) {
+            cachedObject = value
+            locked = true
         }
     }
 
-    synchronized void cacheClosureOutput(Closure<K> closure) {
-        if (!locked.get()) {
-            K obj = closure.call()
-            cache(obj)
+    synchronized void cacheClosureOutput(Closure<? extends K> closure) {
+        if (!locked) {
+            K v = closure.call()
+            // If you do NOT want to cache nulls, use:
+            // if (v != null) { cachedObject = v; locked = true }
+            // else leave 'locked' false so another attempt can compute later.
+            cachedObject = v
+            locked = true
         }
     }
 
-    K fetch(Closure fetchClosure) {
-        if (!locked.get()) {
-            cacheClosureOutput(fetchClosure)
+    /**
+     * Computes (once) using the supplied closure and returns the cached value thereafter.
+     * If the closure throws, nothing is cached and the exception propagates.
+     */
+    K fetch(Closure<? extends K> fetchClosure) {
+        if (!isLocked()) {
+            cacheClosureOutput(fetchClosure)   // synchronized inside
         }
-        cachedObject.get()
+        return getCachedObject()               // synchronized getter below
     }
 
-    K getCachedObject() {
-        cachedObject.get()
+    /** Required: expose the cached object directly. */
+    synchronized K getCachedObject() {
+        return cachedObject
     }
 
     synchronized void clear() {
-        cachedObject.set(null)
-        locked.set(false)
+        cachedObject = null
+        locked = false
     }
 
-    boolean getLocked() {
-        locked.get()
+    /** Bean-style accessor (preferred). */
+    synchronized boolean isLocked() {
+        return locked
     }
+
 }
-
