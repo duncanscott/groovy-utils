@@ -1,7 +1,10 @@
 package duncanscott.org.groovy.utils.json.util
 
 import com.fasterxml.jackson.core.JsonProcessingException
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.databind.node.ObjectNode
 import groovy.lang.GroovyObject
 import groovy.lang.MetaClass
 import groovy.util.logging.Slf4j
@@ -12,6 +15,9 @@ class JsonUtil {
     private static final ObjectMapper MAPPER = new ObjectMapper()
 
     static boolean isNull(Object obj) {
+        if (obj instanceof JsonNode) {
+            return ((JsonNode) obj).isNull()
+        }
         return obj == null
     }
 
@@ -39,10 +45,9 @@ class JsonUtil {
         return propertiesToExclude
     }
 
-
-    static Map<String, Object> groovyObjectToJson(GroovyObject obj, Object propertiesToScreenOut = null) {
+    static ObjectNode groovyObjectToJson(GroovyObject obj, Object propertiesToScreenOut = null) {
         log.debug "converting groovy object ${obj} to JSON"
-        Map<String, Object> jsonObj = new LinkedHashMap<>()
+        ObjectNode jsonObj = MAPPER.createObjectNode()
         if (obj != null) {
             Set<String> propertiesToExclude = extractPropertiesToExclude(propertiesToScreenOut)
             obj.metaClass.properties*.name.each { String name ->
@@ -53,10 +58,10 @@ class JsonUtil {
                         return
                     }
                     log.debug "converting property ${name} to JSON"
-                    Object jsonVal = toJson(propVal)
-                    if (jsonVal != null && !((jsonVal instanceof List && ((List)jsonVal).isEmpty()) || (jsonVal instanceof Map && ((Map)jsonVal).isEmpty()))) {
+                    JsonNode jsonVal = toJson(propVal)
+                    if (jsonVal != null && !jsonVal.isNull() && jsonVal.size() > 0) {
                         log.debug "returned value is of class ${jsonVal.class?.name}"
-                        jsonObj[jsonName] = jsonVal
+                        jsonObj.set(jsonName, jsonVal)
                     }
                 }
             }
@@ -65,12 +70,15 @@ class JsonUtil {
     }
 
     static String toString(Object o) {
-        try {
-            return MAPPER.writeValueAsString(o)
-        } catch (JsonProcessingException e) {
-            log.warn("Failed to serialize object to JSON string, falling back to toString()", e)
-            return o.toString()
+        if (o instanceof JsonNode) {
+            try {
+                return MAPPER.writeValueAsString(o)
+            } catch (JsonProcessingException e) {
+                log.warn("Failed to serialize JsonNode to string, falling back to toString()", e)
+                return o.toString()
+            }
         }
+        return o?.toString()
     }
 
     static void mergeMapsNoReplace(Map map, Map mapToMerge, boolean throwErrorOnConflict = false) {
@@ -90,12 +98,15 @@ class JsonUtil {
         }
     }
 
-    static Object toJson(Object obj) {
+    static JsonNode toJson(Object obj) {
         if (isNull(obj)) {
-            return null
+            return MAPPER.nullNode()
+        }
+        if (obj instanceof JsonNode) {
+            return (JsonNode) obj
         }
         if (obj instanceof Date) {
-            return DateUtil.dateToString((Date) obj)
+            return MAPPER.getNodeFactory().textNode(DateUtil.dateToString((Date) obj))
         }
         if (obj instanceof Map) {
             return toJsonObject((Map)obj)
@@ -103,50 +114,45 @@ class JsonUtil {
         if (obj instanceof Iterable) {
             return toJsonArray((Iterable)obj)
         }
-        if (obj instanceof Number) {
-            return obj
-        }
-        if (obj instanceof CharSequence) {
-            return obj.toString()
-        }
-        if (obj instanceof Boolean) {
-            return obj.booleanValue()
-        }
         if (obj instanceof GroovyObject) {
             return groovyObjectToJson((GroovyObject)obj)
         }
-        return "$obj".toString()
+        return MAPPER.valueToTree(obj)
     }
 
-
-    static Map<String, Object> toJsonObject(Map obj) {
-        Map<String, Object> json = new LinkedHashMap<>()
+    static ObjectNode toJsonObject(Map obj) {
+        if (obj instanceof ObjectNode) {
+            return (ObjectNode) obj
+        }
+        ObjectNode json = MAPPER.createObjectNode()
         obj?.each { key, val ->
-            json["${key}"] = toJson(val)
+            json.set("${key}", toJson(val))
         }
         return json
     }
 
-
-    static List<Object> toJsonArray(Iterable obj) {
-        List<Object> json = new ArrayList<>()
+    static ArrayNode toJsonArray(Iterable obj) {
+        if (obj instanceof ArrayNode) {
+            return (ArrayNode) obj
+        }
+        ArrayNode json = MAPPER.createArrayNode()
         obj?.each { val ->
-            json << toJson(val)
+            json.add(toJson(val))
         }
         return json
     }
 
-
-    static Map<String, Object> removeNulls(Map<String, Object> json) {
-        Map<String, Object> clean = new LinkedHashMap<>()
-        json.each { key, val ->
-            if (val instanceof Map) {
-                clean[key] = removeNulls((Map)val)
-            } else if (!isNull(val)) {
-                clean[key] = val
+    static ObjectNode removeNulls(ObjectNode json) {
+        ObjectNode clean = MAPPER.createObjectNode()
+        json.fields().each { Map.Entry<String, JsonNode> entry ->
+            String key = entry.getKey()
+            JsonNode val = entry.getValue()
+            if (val.isObject()) {
+                clean.set(key, removeNulls((ObjectNode)val))
+            } else if (!val.isNull()) {
+                clean.set(key, val)
             }
         }
         clean
     }
-
 }

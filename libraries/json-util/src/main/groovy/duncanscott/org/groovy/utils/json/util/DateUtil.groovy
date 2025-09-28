@@ -1,14 +1,15 @@
 package duncanscott.org.groovy.utils.json.util
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ArrayNode
 import groovy.util.logging.Slf4j
 
 import java.text.SimpleDateFormat
 
-/**
- * Created by dscott on 10/13/2014.
- */
 @Slf4j
 class DateUtil {
+
+    private static final ObjectMapper MAPPER = new ObjectMapper()
 
     static final String UTC = 'UTC'
     static final TimeZone greenwichMeanTime = TimeZone.getTimeZone(UTC)
@@ -43,7 +44,7 @@ class DateUtil {
         dateToString(new Date())
     }
 
-    static List<Integer> nowToJsonArray() {
+    static ArrayNode nowToJsonArray() {
         dateToJsonArray(new Date())
     }
 
@@ -73,22 +74,24 @@ class DateUtil {
             maxIndex = date2.size()
         }
         while (!result && i < maxIndex) {
-            Integer v1 = date1[i] as Integer
-            Integer v2 = date2[i] as Integer
+            def val1 = date1[i]
+            def val2 = date2[i]
+            Integer v1 = (val1 instanceof Number) ? ((Number)val1).intValue() : (val1.toString() as Integer)
+            Integer v2 = (val2 instanceof Number) ? ((Number)val2).intValue() : (val2.toString() as Integer)
             result = v1 <=> v2
             i++
         }
         return result
     }
 
-    static List<Integer> dateToJsonArray(Date date = new Date()) {
-        List<Integer> json = null
+    static ArrayNode dateToJsonArray(Date date = new Date()) {
+        ArrayNode json = null
         if (date) {
-            json = new ArrayList<>()
+            json = MAPPER.createArrayNode()
             Calendar c = utcCalendar
             c.setTime(date)
             calendarFields.each { Integer calendarField ->
-                json << c.get(calendarField)
+                json.add(c.get(calendarField))
             }
         }
         return json
@@ -100,9 +103,10 @@ class DateUtil {
             Integer index = 0
             Integer maxIndex = [timeValues.size(), calendarFields.size()].min()
             while (index < maxIndex) {
-                Integer timeValue = timeValues[index] as Integer
+                def timeValue = timeValues[index]
+                Integer intValue = (timeValue instanceof Number) ? ((Number)timeValue).intValue() : (timeValue.toString() as Integer)
                 Integer calendarField = calendarFields[index]
-                c.set(calendarField, timeValue)
+                c.set(calendarField, intValue)
                 ++index
             }
             return c.getTime()

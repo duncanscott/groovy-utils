@@ -1,11 +1,17 @@
 package duncanscott.org.groovy.utils.json.mapper
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.databind.node.ObjectNode
 import duncanscott.org.groovy.utils.ondemandcache.OnDemandCacheMapped
 
 class JsonMapper<K extends JsonMapper> {
 
-    //these are elements (Map or List) under keys that are not mapped to objects.
-    OnDemandCacheMapped<String, Object> cachedSections = new OnDemandCacheMapped<>(false)
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+
+    //these are elements (ObjectNode or ArrayNode) under keys that are not mapped to objects.
+    OnDemandCacheMapped<String, JsonNode> cachedSections = new OnDemandCacheMapped<>(false)
 
     private final OnDemandCacheMapped<String, Map<String, JsonMapper>> cachedChildObjects = new OnDemandCacheMapped<>()
     private final OnDemandCacheMapped<String, List<JsonMapper>> cachedChildArrays = new OnDemandCacheMapped<>()
@@ -14,7 +20,7 @@ class JsonMapper<K extends JsonMapper> {
     private final List<MappingError> mappingErrors = []
     final List<JsonMapper> children = []
 
-    Map<String, Object> json
+    ObjectNode json
     Integer level //depth in object
     Integer index //index in array
     K parent
@@ -27,14 +33,14 @@ class JsonMapper<K extends JsonMapper> {
         this.level = 1
     }
 
-    JsonMapper(Map<String, Object> json) {
+    JsonMapper(ObjectNode json) {
         this.parent = null
         this.key = null
         this.json = json
         this.level = 1
     }
 
-    JsonMapper(Map<String, Object> json, K parent, String key) {
+    JsonMapper(ObjectNode json, K parent, String key) {
         this.json = json
         setParent(parent, key)
     }
@@ -62,13 +68,13 @@ class JsonMapper<K extends JsonMapper> {
     Map<String, JsonMapper> childObjects(String key, Class<JsonMapper> clazz) {
         cachedChildObjects.fetch(key) {
             Map<String, JsonMapper> keyChild = [:]
-            Map<String, Object> subJson = objectSection(key)
-            subJson.each { String k, Object childJson ->
-                if (childJson instanceof Map) {
+            ObjectNode subJson = objectSection(key)
+            subJson?.fields()?.each { Map.Entry<String, JsonNode> entry ->
+                if (entry.getValue().isObject()) {
                     JsonMapper childMapper = clazz.newInstance()
-                    childMapper.json = (Map<String, Object>) childJson
+                    childMapper.json = (ObjectNode) entry.getValue()
                     childMapper.setParent(this, key)
-                    keyChild[k] = childMapper
+                    keyChild[entry.getKey()] = childMapper
                 }
             }
             keyChild
@@ -78,10 +84,10 @@ class JsonMapper<K extends JsonMapper> {
     List<JsonMapper> childElements(String key, Class<JsonMapper> clazz) {
         cachedChildArrays.fetch(key) {
             Integer arrayIndex = 0
-            arraySection(key)?.collect { Object childJson ->
-                if (childJson instanceof Map) {
+            arraySection(key)?.collect { JsonNode childJson ->
+                if (childJson.isObject()) {
                     JsonMapper childMapper = clazz.newInstance()
-                    childMapper.json = (Map<String, Object>) childJson
+                    childMapper.json = (ObjectNode) childJson
                     childMapper.setParent(this, key)
                     childMapper.index = arrayIndex++
                     return childMapper
@@ -93,7 +99,7 @@ class JsonMapper<K extends JsonMapper> {
 
     JsonMapper childElement(String key, Class<JsonMapper> clazz, boolean createIfAbsent = false) {
         cachedChildren.fetch(key) {
-            Map<String, Object> childJson = objectSection(key, createIfAbsent)
+            ObjectNode childJson = objectSection(key, createIfAbsent)
             if (childJson != null) {
                 JsonMapper childMapper = clazz.newInstance()
                 childMapper.json = childJson
@@ -104,15 +110,15 @@ class JsonMapper<K extends JsonMapper> {
         }
     }
 
-    Map<String, Object> objectSection(String key, boolean create = false) {
-        (Map<String, Object>) cachedSections.fetch(key) {
-            Object existingSection = json[key]
-            if (existingSection instanceof Map) {
+    ObjectNode objectSection(String key, boolean create = false) {
+        (ObjectNode) cachedSections.fetch(key) {
+            JsonNode existingSection = json.get(key)
+            if (existingSection instanceof ObjectNode) {
                 return existingSection
             }
             if (create) {
-                Map<String, Object> newSection = new LinkedHashMap<>()
-                json[key] = newSection
+                ObjectNode newSection = MAPPER.createObjectNode()
+                json.set(key, newSection)
                 return newSection
             }
             return null
@@ -120,34 +126,34 @@ class JsonMapper<K extends JsonMapper> {
     }
 
 
-    List<Object> arraySection(String key, boolean create = false) {
-        (List<Object>) cachedSections.fetch(key) {
-            Object existingSection = json[key]
-            if (existingSection instanceof List) {
+    ArrayNode arraySection(String key, boolean create = false) {
+        (ArrayNode) cachedSections.fetch(key) {
+            JsonNode existingSection = json.get(key)
+            if (existingSection instanceof ArrayNode) {
                 return existingSection
             }
             if (create) {
-                List<Object> newSection = new ArrayList<>()
-                json[key] = newSection
+                ArrayNode newSection = MAPPER.createArrayNode()
+                json.set(key, newSection)
                 return newSection
             }
             return null
         }
     }
 
-    Map<String, Object> createObject(String key) {
+    ObjectNode createObject(String key) {
         objectSection(key, true)
     }
 
-    Map<String, Object> getObject(String key) {
+    ObjectNode getObject(String key) {
         objectSection(key, false)
     }
 
-    List<Object> createArray(String key) {
+    ArrayNode createArray(String key) {
         arraySection(key, true)
     }
 
-    List<Object> getArray(String key) {
+    ArrayNode getArray(String key) {
         arraySection(key, false)
     }
 
@@ -188,6 +194,4 @@ class JsonMapper<K extends JsonMapper> {
             return objectName
         }
     }
-
-
 }

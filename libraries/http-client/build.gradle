@@ -2,7 +2,7 @@ dependencies {
     api project(':libraries:on-demand-cache')
     api project(':libraries:json-util')
 
-    api group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.18.1'
+    api group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
     api group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: httpComponentsVersion
 
     // https://mvnrepository.com/artifact/com.google.guava/guava

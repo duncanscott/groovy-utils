@@ -1,6 +1,8 @@
 package duncanscott.org.groovy.utils.json.util
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.databind.node.ObjectNode
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -19,25 +21,31 @@ class DateUtilSpec extends Specification {
         LocalDate baseDate = LocalDate.now()
         Date date1 = ldToDate(baseDate)
         Date date2 = ldToDate(baseDate.plusDays(1))
-        List<Integer> dateList1 = DateUtil.dateToJsonArray(date1)
-        List<Integer> dateList2 = DateUtil.dateToJsonArray(date2)
-        Map<String, Object> jsonObject1 = new LinkedHashMap<>()
-        jsonObject1['date-1'] = dateList1
-        jsonObject1['date-2'] = dateList2
+        ArrayNode dateList1 = DateUtil.dateToJsonArray(date1)
+        ArrayNode dateList2 = DateUtil.dateToJsonArray(date2)
+        ObjectNode jsonObject1 = MAPPER.createObjectNode()
+        jsonObject1.set('date-1', dateList1)
+        jsonObject1.set('date-2', dateList2)
         String jsonText = MAPPER.writeValueAsString(jsonObject1)
-        Map<String, Object> jsonObject2 = MAPPER.readValue(jsonText, Map.class)
+        ObjectNode jsonObject2 = (ObjectNode) MAPPER.readTree(jsonText)
+
+        List<Integer> list1FromObject1 = dateList1.collect { it.asInt() }
+        List<Integer> list2FromObject1 = dateList2.collect { it.asInt() }
+
+        List<Integer> list1FromObject2 = (jsonObject2.get('date-1') as ArrayNode).collect { it.asInt() }
+        List<Integer> list2FromObject2 = (jsonObject2.get('date-2') as ArrayNode).collect { it.asInt() }
 
         expect:
-        -1 == DateUtil.compareDateLists(dateList1, dateList2)
-        1 == DateUtil.compareDateLists(dateList2, dateList1)
-        0 == DateUtil.compareDateLists(dateList1, dateList1)
+        -1 == DateUtil.compareDateLists(list1FromObject1, list2FromObject1)
+        1 == DateUtil.compareDateLists(list2FromObject1, list1FromObject1)
+        0 == DateUtil.compareDateLists(list1FromObject1, list1FromObject1)
 
-        -1 == DateUtil.compareDateLists(jsonObject2['date-1'] as List, jsonObject2['date-2'] as List)
-        1 == DateUtil.compareDateLists(jsonObject2['date-2'] as List, jsonObject2['date-1'] as List)
-        0 == DateUtil.compareDateLists(jsonObject2['date-1'] as List, jsonObject2['date-1'] as List)
+        -1 == DateUtil.compareDateLists(list1FromObject2, list2FromObject2)
+        1 == DateUtil.compareDateLists(list2FromObject2, list1FromObject2)
+        0 == DateUtil.compareDateLists(list1FromObject2, list1FromObject2)
 
-        DateUtil.parseDateList(jsonObject2['date-1'] as List) == date1
-        DateUtil.parseDateList(jsonObject1['date-2'] as List) == date2
+        DateUtil.parseDateList(list1FromObject2) == date1
+        DateUtil.parseDateList(list2FromObject1) == date2
     }
 
     void "test dateToString stringToDate"() {

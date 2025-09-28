@@ -1,17 +1,17 @@
 package duncanscott.org.groovy.utils.json.util
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.databind.node.ObjectNode
 import groovy.util.logging.Slf4j
 import org.codehaus.groovy.runtime.StackTraceUtils
 
-/**
- * Created by duncanscott on 1/3/15.
- */
 @Slf4j
 class JsonEqual {
 
     static boolean areEqual(o1, o2) {
         try {
-            if (o1 instanceof Map && o2 instanceof Map) {
+            if (o1 instanceof ObjectNode && o2 instanceof ObjectNode) {
                 log.debug "comparing:\n${o1}\n${o2}"
             }
             checkElementsEqual(o1, o2)
@@ -36,14 +36,15 @@ class JsonEqual {
         return false
     }
 
-    private static void checkObjectsEqual(Map o1, Map o2) {
-        (o1.keySet() + o2.keySet()).each { key ->
-            log "checking map values equal for key ${key}: ${o1[key]} ${o2[key]}"
-            checkElementsEqual(o1[key], o2[key])
+    private static void checkObjectsEqual(ObjectNode o1, ObjectNode o2) {
+        Set<String> keys = o1.fieldNames().toSet() + o2.fieldNames().toSet()
+        keys.each { String key ->
+            log "checking map values equal for key ${key}: ${o1.get(key)} ${o2.get(key)}"
+            checkElementsEqual(o1.get(key), o2.get(key))
         }
     }
 
-    private static void checkArraysEqual(List a1, List a2) {
+    private static void checkArraysEqual(ArrayNode a1, ArrayNode a2) {
         log "checking arrays 1: ${a1}"
         log "checking arrays 2: ${a2}"
         if (a1.size() != a2.size()) {
@@ -51,7 +52,7 @@ class JsonEqual {
         }
         log "checking array elements"
         for (int i = 0; i < a1.size(); i++) {
-            checkElementsEqual(a1[i], a2[i])
+            checkElementsEqual(a1.get(i), a2.get(i))
         }
     }
 
@@ -63,28 +64,21 @@ class JsonEqual {
         if (e1.is(e2)) {
             return
         }
-        if (e1 instanceof Map || e2 instanceof Map) {
-            if (e1 instanceof Map && e2 instanceof Map) {
-                checkObjectsEqual((Map)e1, (Map)e2)
-                return
-            }
-            throw new NotEqualException(e1, e2)
+
+        JsonNode n1 = (e1 instanceof JsonNode) ? (JsonNode) e1 : JsonUtil.toJson(e1)
+        JsonNode n2 = (e2 instanceof JsonNode) ? (JsonNode) e2 : JsonUtil.toJson(e2)
+
+        if (n1.isObject() && n2.isObject()) {
+            checkObjectsEqual((ObjectNode) n1, (ObjectNode) n2)
+            return
         }
-        if (e1 instanceof List || e2 instanceof List) {
-            if (e1 instanceof List && e2 instanceof List) {
-                checkArraysEqual((List)e1, (List)e2)
-                return
-            }
-            throw new NotEqualException(e1, e2)
+        if (n1.isArray() && n2.isArray()) {
+            checkArraysEqual((ArrayNode) n1, (ArrayNode) n2)
+            return
         }
-        if (e1 instanceof Number && e2 instanceof Number) {
-            if (e1 != e2) {
-                throw new NotEqualException(e1, e2)
-            }
-        } else if (!e1.toString().equals(e2.toString())) {
+
+        if (!n1.equals(n2)) {
             throw new NotEqualException(e1, e2)
         }
     }
-
-
 }

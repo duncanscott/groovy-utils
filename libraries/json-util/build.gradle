@@ -1,6 +1,6 @@
 dependencies {
     api project(':libraries:on-demand-cache')
-    api group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.18.1'
+    api group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
 
     implementation group: 'org.apache.groovy', name: 'groovy', version: groovyVersion
 }
