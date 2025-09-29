@@ -1,21 +1,14 @@
 package duncanscott.org.groovy.utils.http.client.base;
 
-import org.apache.hc.core5.http.HttpStatus;
-
-import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
 public class HttpClientResponse {
 
-    List<Integer> successCodes = Arrays.asList(
-            HttpStatus.SC_CREATED,
-            HttpStatus.SC_OK
-    );
     private TextResponse textResponse;
 
     public boolean getSuccess() {
-        return successCodes.contains(getStatusCode());
+        int statusCode = getStatusCode();
+        return 200 <= statusCode && statusCode < 300;
     }
 
     public String getRequestUri() {
@@ -58,7 +51,6 @@ public class HttpClientResponse {
             }
 
         }
-
         stringBuilder.append(")");
         return stringBuilder.toString();
     }
