@@ -4,7 +4,7 @@ package duncanscott.org.groovy.http.client
 import duncanscott.org.groovy.javautil.http.TextResponse
 import org.apache.hc.core5.http.HttpStatus
 
-class HttpResponse {
+class Response {
 
     TextResponse textResponse
 

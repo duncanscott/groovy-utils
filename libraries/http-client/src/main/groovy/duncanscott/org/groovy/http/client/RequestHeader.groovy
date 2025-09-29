@@ -1,4 +1,4 @@
-package duncanscott.org.groovy.http.util
+package duncanscott.org.groovy.http.client
 
 class RequestHeader {
 

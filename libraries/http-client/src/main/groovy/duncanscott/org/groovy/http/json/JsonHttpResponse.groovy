@@ -2,10 +2,10 @@ package duncanscott.org.groovy.http.json
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import duncanscott.org.groovy.http.client.HttpResponse
+import duncanscott.org.groovy.http.client.Response
 import duncanscott.org.groovy.utils.ondemandcache.OnDemandCache
 
-class JsonHttpResponse extends HttpResponse {
+class JsonHttpResponse extends Response {
 
     private static final ObjectMapper MAPPER = new ObjectMapper()
 

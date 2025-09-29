@@ -1,13 +1,13 @@
 package duncanscott.org.groovy.http.json
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import duncanscott.org.groovy.http.client.HttpClient
-import duncanscott.org.groovy.http.util.RequestHeader
+import duncanscott.org.groovy.http.client.HttpClientBase
+import duncanscott.org.groovy.http.client.RequestHeader
 import duncanscott.org.groovy.javautil.http.InputStreamHandler
 import org.apache.hc.core5.http.ContentType
 import org.apache.hc.core5.http.HttpHeaders
 
-class JsonHttpClient extends HttpClient<JsonHttpResponse> {
+class JsonHttpClient extends HttpClientBase<JsonHttpResponse> {
 
     private static final ObjectMapper MAPPER = new ObjectMapper()
 
@@ -28,75 +28,91 @@ class JsonHttpClient extends HttpClient<JsonHttpResponse> {
 
     // --- Body-aware methods --- //
 
-    JsonHttpResponse get(String url, Object body, Collection<RequestHeader> headers = null) {
+    @Override
+    JsonHttpResponse get(String url, Object body, Collection<RequestHeader> headers) {
         String jsonBody = MAPPER.writeValueAsString(body)
         return (JsonHttpResponse) super.get(url, jsonBody, ContentType.APPLICATION_JSON, headers)
     }
 
-    JsonHttpResponse get(String url, Object body, InputStreamHandler streamHandler, Collection<RequestHeader> headers = null) {
+    @Override
+    JsonHttpResponse get(String url, Object body, InputStreamHandler streamHandler, Collection<RequestHeader> headers) {
         String jsonBody = MAPPER.writeValueAsString(body)
         return (JsonHttpResponse) super.get(url, jsonBody, ContentType.APPLICATION_JSON, streamHandler, headers)
     }
 
-    JsonHttpResponse get(String url, InputStream inputStream, Collection<RequestHeader> headers = null) {
+    @Override
+    JsonHttpResponse get(String url, InputStream inputStream, Collection<RequestHeader> headers) {
         return (JsonHttpResponse) super.get(url, inputStream, headers)
     }
 
-    JsonHttpResponse get(String url, InputStream inputStream, InputStreamHandler streamHandler, Collection<RequestHeader> headers = null) {
+    @Override
+    JsonHttpResponse get(String url, InputStream inputStream, InputStreamHandler streamHandler, Collection<RequestHeader> headers) {
         return (JsonHttpResponse) super.get(url, inputStream, streamHandler, headers)
     }
 
-    JsonHttpResponse post(String url, Object body, Collection<RequestHeader> headers = null) {
+    @Override
+    JsonHttpResponse post(String url, Object body, Collection<RequestHeader> headers) {
         String jsonBody = MAPPER.writeValueAsString(body)
         return (JsonHttpResponse) super.post(url, jsonBody, ContentType.APPLICATION_JSON, headers)
     }
 
-    JsonHttpResponse post(String url, Object body, InputStreamHandler streamHandler, Collection<RequestHeader> headers = null) {
+    @Override
+    JsonHttpResponse post(String url, Object body, InputStreamHandler streamHandler, Collection<RequestHeader> headers) {
         String jsonBody = MAPPER.writeValueAsString(body)
         return (JsonHttpResponse) super.post(url, jsonBody, ContentType.APPLICATION_JSON, streamHandler, headers)
     }
 
-    JsonHttpResponse post(String url, InputStream inputStream, Collection<RequestHeader> headers = null) {
+    @Override
+    JsonHttpResponse post(String url, InputStream inputStream, Collection<RequestHeader> headers) {
         return (JsonHttpResponse) super.post(url, inputStream, headers)
     }
 
-    JsonHttpResponse post(String url, InputStream inputStream, InputStreamHandler streamHandler, Collection<RequestHeader> headers = null) {
+    @Override
+    JsonHttpResponse post(String url, InputStream inputStream, InputStreamHandler streamHandler, Collection<RequestHeader> headers) {
         return (JsonHttpResponse) super.post(url, inputStream, streamHandler, headers)
     }
 
-    JsonHttpResponse put(String url, Object body, Collection<RequestHeader> headers = null) {
+    @Override
+    JsonHttpResponse put(String url, Object body, Collection<RequestHeader> headers) {
         String jsonBody = MAPPER.writeValueAsString(body)
         return (JsonHttpResponse) super.put(url, jsonBody, ContentType.APPLICATION_JSON, headers)
     }
 
-    JsonHttpResponse put(String url, Object body, InputStreamHandler streamHandler, Collection<RequestHeader> headers = null) {
+    @Override
+    JsonHttpResponse put(String url, Object body, InputStreamHandler streamHandler, Collection<RequestHeader> headers) {
         String jsonBody = MAPPER.writeValueAsString(body)
         return (JsonHttpResponse) super.put(url, jsonBody, ContentType.APPLICATION_JSON, streamHandler, headers)
     }
 
-    JsonHttpResponse put(String url, InputStream inputStream, Collection<RequestHeader> headers = null) {
+    @Override
+    JsonHttpResponse put(String url, InputStream inputStream, Collection<RequestHeader> headers) {
         return (JsonHttpResponse) super.put(url, inputStream, headers)
     }
 
-    JsonHttpResponse put(String url, InputStream inputStream, InputStreamHandler streamHandler, Collection<RequestHeader> headers = null) {
+    @Override
+    JsonHttpResponse put(String url, InputStream inputStream, InputStreamHandler streamHandler, Collection<RequestHeader> headers) {
         return (JsonHttpResponse) super.put(url, inputStream, streamHandler, headers)
     }
 
-    JsonHttpResponse delete(String url, Object body, Collection<RequestHeader> headers = null) {
+    @Override
+    JsonHttpResponse delete(String url, Object body, Collection<RequestHeader> headers) {
         String jsonBody = MAPPER.writeValueAsString(body)
         return (JsonHttpResponse) super.delete(url, jsonBody, ContentType.APPLICATION_JSON, headers)
     }
 
-    JsonHttpResponse delete(String url, Object body, InputStreamHandler streamHandler, Collection<RequestHeader> headers = null) {
+    @Override
+    JsonHttpResponse delete(String url, Object body, InputStreamHandler streamHandler, Collection<RequestHeader> headers) {
         String jsonBody = MAPPER.writeValueAsString(body)
         return (JsonHttpResponse) super.delete(url, jsonBody, ContentType.APPLICATION_JSON, streamHandler, headers)
     }
 
-    JsonHttpResponse delete(String url, InputStream inputStream, Collection<RequestHeader> headers = null) {
+    @Override
+    JsonHttpResponse delete(String url, InputStream inputStream, Collection<RequestHeader> headers) {
         return (JsonHttpResponse) super.delete(url, inputStream, headers)
     }
 
-    JsonHttpResponse delete(String url, InputStream inputStream, InputStreamHandler streamHandler, Collection<RequestHeader> headers = null) {
+    @Override
+    JsonHttpResponse delete(String url, InputStream inputStream, InputStreamHandler streamHandler, Collection<RequestHeader> headers) {
         return (JsonHttpResponse) super.delete(url, inputStream, streamHandler, headers)
     }
 }
