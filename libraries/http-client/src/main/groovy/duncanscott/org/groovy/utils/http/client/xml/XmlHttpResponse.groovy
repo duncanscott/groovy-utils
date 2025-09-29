@@ -1,6 +1,6 @@
 package duncanscott.org.groovy.utils.http.client.xml
 
-import duncanscott.org.groovy.utils.http.client.HttpClientResponse
+import duncanscott.org.groovy.utils.http.client.base.HttpClientResponse
 import duncanscott.org.groovy.utils.ondemandcache.OnDemandCache
 import groovy.xml.XmlParser
 

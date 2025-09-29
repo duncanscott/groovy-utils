@@ -1,8 +1,8 @@
 package duncanscott.org.groovy.utils.http.client.xml
 
-import duncanscott.org.groovy.utils.http.client.HttpClientImpl
-import duncanscott.org.groovy.utils.http.client.HttpClientRequest
-import duncanscott.org.groovy.utils.http.client.RequestHeader
+import duncanscott.org.groovy.utils.http.client.base.HttpClientImpl
+import duncanscott.org.groovy.utils.http.client.base.HttpClientRequest
+import duncanscott.org.groovy.utils.http.client.base.RequestHeader
 import org.apache.hc.core5.http.HttpHeaders
 
 class XmlHttpClient extends HttpClientImpl<XmlHttpResponse> {

@@ -1,4 +1,4 @@
-package duncanscott.org.groovy.utils.http.client;
+package duncanscott.org.groovy.utils.http.client.base;
 
 import org.apache.hc.core5.http.ContentType;
 

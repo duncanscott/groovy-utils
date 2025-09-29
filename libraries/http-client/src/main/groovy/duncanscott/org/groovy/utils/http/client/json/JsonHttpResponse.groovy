@@ -2,8 +2,8 @@ package duncanscott.org.groovy.utils.http.client.json
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import duncanscott.org.groovy.utils.http.client.HttpClientRequest
-import duncanscott.org.groovy.utils.http.client.HttpClientResponse
+import duncanscott.org.groovy.utils.http.client.base.HttpClientRequest
+import duncanscott.org.groovy.utils.http.client.base.HttpClientResponse
 import duncanscott.org.groovy.utils.ondemandcache.OnDemandCache
 
 class JsonHttpResponse extends HttpClientResponse {

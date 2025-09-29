@@ -1,4 +1,4 @@
-package duncanscott.org.groovy.utils.http.client;
+package duncanscott.org.groovy.utils.http.client.base;
 
 import java.io.InputStream;
 
