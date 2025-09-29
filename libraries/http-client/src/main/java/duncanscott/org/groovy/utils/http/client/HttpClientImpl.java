@@ -1,4 +1,4 @@
-package duncanscott.org.groovy.http.client;
+package duncanscott.org.groovy.utils.http.client;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -125,7 +125,7 @@ public class HttpClientImpl<K extends HttpClientResponse> implements HttpClient<
     }
 
     @Override
-    public HttpClientImpl<K> setInterceptor(AfterRequestInterceptor interceptor) {
+    public HttpClientImpl<K> setInterceptor(AfterRequestInterceptor<K> interceptor) {
         this.afterRequestInterceptor = interceptor;    // fixed: assign the parameter
         return this;
     }

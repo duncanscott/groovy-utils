@@ -1,4 +1,4 @@
-package duncanscott.org.groovy.http.client;
+package duncanscott.org.groovy.utils.http.client;
 
 public class InvalidUrlException extends RuntimeException {
     public InvalidUrlException(final String url) {

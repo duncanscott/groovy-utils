@@ -1,4 +1,4 @@
-package duncanscott.org.groovy.http.client;
+package duncanscott.org.groovy.utils.http.client;
 
 import org.apache.hc.core5.http.ClassicHttpRequest;
 

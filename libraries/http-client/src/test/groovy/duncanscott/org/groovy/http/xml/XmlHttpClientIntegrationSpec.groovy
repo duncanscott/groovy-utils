@@ -1,6 +1,7 @@
 package duncanscott.org.groovy.http.xml
 
-import duncanscott.org.groovy.http.client.HttpClientRequest
+import duncanscott.org.groovy.utils.http.client.xml.XmlHttpClient
+import duncanscott.org.groovy.utils.http.client.xml.XmlHttpResponse
 import spock.lang.Specification
 
 class XmlHttpClientIntegrationSpec extends Specification {
@@ -17,7 +18,7 @@ class XmlHttpClientIntegrationSpec extends Specification {
 
         when:
         XmlHttpResponse xmlHttpResponse
-        try ( XmlHttpClient client = new XmlHttpClient()) {
+        try (XmlHttpClient client = new XmlHttpClient()) {
             xmlHttpResponse = client.get(url).execute()
         }
 

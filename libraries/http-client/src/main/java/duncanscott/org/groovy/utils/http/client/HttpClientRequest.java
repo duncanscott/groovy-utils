@@ -1,4 +1,4 @@
-package duncanscott.org.groovy.http.client;
+package duncanscott.org.groovy.utils.http.client;
 
 import java.io.InputStream;
 import java.net.URI;
@@ -10,7 +10,7 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.Method;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 
-public class HttpClientRequest<K> {
+public class HttpClientRequest<K extends HttpClientResponse> {
 
     private final HttpClient<K> httpClient;
     private final Method method;
@@ -27,7 +27,7 @@ public class HttpClientRequest<K> {
         this.method = method;
     }
 
-    public K execute() {
+    public K execute() throws URISyntaxException {
         return httpClient.execute(this);
     }
 
@@ -117,7 +117,7 @@ public class HttpClientRequest<K> {
     }
 
     public URI getUrl() {
-        return url; // fixed: was "uri" in Groovy snippet
+        return url;
     }
 
     public Collection<RequestHeader> getHeaders() {

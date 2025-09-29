@@ -1,7 +1,7 @@
-package duncanscott.org.groovy.http.handler
+package duncanscott.org.groovy.utils.http.client.handler
 
 import com.google.common.io.ByteStreams
-import duncanscott.org.groovy.http.client.InputStreamHandler
+import duncanscott.org.groovy.utils.http.client.InputStreamHandler
 
 class InputStreamToFile implements InputStreamHandler {
 

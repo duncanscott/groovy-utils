@@ -1,4 +1,4 @@
-package duncanscott.org.groovy.http.client;
+package duncanscott.org.groovy.utils.http.client;
 
 import org.apache.hc.core5.http.ContentType;
 
@@ -13,7 +13,7 @@ public interface HttpClient<K extends HttpClientResponse> extends Closeable {
 
     HttpClient<K> setInterceptor(BeforeRequestInterceptor interceptor);
 
-    HttpClient<K> setInterceptor(AfterRequestInterceptor interceptor);
+    HttpClient<K> setInterceptor(AfterRequestInterceptor<K> interceptor);
 
     ContentType getDefaultRequestContentType();
 

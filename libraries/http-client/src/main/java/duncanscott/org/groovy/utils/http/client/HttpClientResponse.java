@@ -1,10 +1,7 @@
-package duncanscott.org.groovy.http.client;
+package duncanscott.org.groovy.utils.http.client;
 
 import org.apache.hc.core5.http.HttpStatus;
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
-import org.codehaus.groovy.runtime.StringGroovyMethods;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -36,7 +33,7 @@ public class HttpClientResponse {
     }
 
     public int getStatusCode() {
-        return DefaultGroovyMethods.asBoolean(textResponse) ? textResponse.statusCode : 0;
+        return (textResponse != null) ? textResponse.statusCode : 0;
     }
 
     public String getReasonPhrase() {
@@ -52,10 +49,10 @@ public class HttpClientResponse {
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder(this.getClass().getSimpleName());
         stringBuilder.append("(");
-        if (StringGroovyMethods.asBoolean(getRequestUri())) {
+        if (getRequestUri() != null && !getRequestUri().isEmpty()) {
             stringBuilder.append(getRequestUri());
             stringBuilder.append(":").append(getStatusCode());
-            if (StringGroovyMethods.asBoolean(getReasonPhrase())) {
+            if (getReasonPhrase() != null && !getReasonPhrase().isEmpty()) {
                 stringBuilder.append(":").append(getReasonPhrase());
             }
 
