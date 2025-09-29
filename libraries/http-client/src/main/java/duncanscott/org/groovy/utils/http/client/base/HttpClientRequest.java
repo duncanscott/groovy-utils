@@ -1,14 +1,14 @@
 package duncanscott.org.groovy.utils.http.client.base;
 
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.Method;
+import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
+
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import org.apache.hc.core5.http.ContentType;
-import org.apache.hc.core5.http.Method;
-import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 
 public class HttpClientRequest<K extends HttpClientResponse> {
 
@@ -56,21 +56,6 @@ public class HttpClientRequest<K extends HttpClientResponse> {
         }
     }
 
-    public HttpClientRequest<K> setUrl(URI url) {
-        this.url = url;
-        return this;
-    }
-
-    public HttpClientRequest<K> setUrl(String url) throws URISyntaxException {
-        this.url = new URI(url);
-        return this;
-    }
-
-    public HttpClientRequest<K> setHeaders(Collection<RequestHeader> headers) {
-        this.headers = headers;
-        return this;
-    }
-
     public HttpClientRequest<K> addHeader(RequestHeader header) {
         if (this.headers == null) {
             this.headers = new ArrayList<>();
@@ -90,28 +75,6 @@ public class HttpClientRequest<K extends HttpClientResponse> {
         return this;
     }
 
-    public HttpClientRequest<K> setBody(String body) {
-        this.body = body;
-        this.inputStream = null;
-        return this;
-    }
-
-    public HttpClientRequest<K> setInputStream(InputStream inputStream) {
-        this.inputStream = inputStream;
-        this.body = null;
-        return this;
-    }
-
-    public HttpClientRequest<K> setStreamHandler(InputStreamHandler streamHandler) {
-        this.streamHandler = streamHandler;
-        return this;
-    }
-
-    public HttpClientRequest<K> setContentType(ContentType contentType) {
-        this.contentType = contentType;
-        return this;
-    }
-
     public Method getMethod() {
         return method;
     }
@@ -120,23 +83,60 @@ public class HttpClientRequest<K extends HttpClientResponse> {
         return url;
     }
 
+    public HttpClientRequest<K> setUrl(URI url) {
+        this.url = url;
+        return this;
+    }
+
+    public HttpClientRequest<K> setUrl(String url) throws URISyntaxException {
+        this.url = new URI(url);
+        return this;
+    }
+
     public Collection<RequestHeader> getHeaders() {
         return headers;
+    }
+
+    public HttpClientRequest<K> setHeaders(Collection<RequestHeader> headers) {
+        this.headers = headers;
+        return this;
     }
 
     public String getBody() {
         return body;
     }
 
+    public HttpClientRequest<K> setBody(String body) {
+        this.body = body;
+        this.inputStream = null;
+        return this;
+    }
+
     public InputStream getInputStream() {
         return inputStream;
+    }
+
+    public HttpClientRequest<K> setInputStream(InputStream inputStream) {
+        this.inputStream = inputStream;
+        this.body = null;
+        return this;
     }
 
     public InputStreamHandler getStreamHandler() {
         return streamHandler;
     }
 
+    public HttpClientRequest<K> setStreamHandler(InputStreamHandler streamHandler) {
+        this.streamHandler = streamHandler;
+        return this;
+    }
+
     public ContentType getContentType() {
         return contentType;
+    }
+
+    public HttpClientRequest<K> setContentType(ContentType contentType) {
+        this.contentType = contentType;
+        return this;
     }
 }

@@ -24,7 +24,7 @@ class JsonHttpResponse extends HttpClientResponse {
         return null
     }
 
-   JsonHttpResponse execute(HttpClientRequest request) {
+    JsonHttpResponse execute(HttpClientRequest request) {
         return (JsonHttpResponse) super.execute(request)
     }
 

@@ -2,12 +2,7 @@ package duncanscott.org.groovy.utils.http.client.base;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.core5.http.ClassicHttpRequest;
-import org.apache.hc.core5.http.ClassicHttpResponse;
-import org.apache.hc.core5.http.ContentType;
-import org.apache.hc.core5.http.HttpEntity;
-import org.apache.hc.core5.http.HttpHeaders;
-import org.apache.hc.core5.http.Method;
+import org.apache.hc.core5.http.*;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
@@ -26,13 +21,11 @@ import java.util.List;
 
 public class HttpClientImpl<K extends HttpClientResponse> implements HttpClient<K>, Closeable {
 
+    protected final List<RequestHeader> defaultHeaders = new ArrayList<>();
     private final Constructor<K> responseConstructor;
     private final CloseableHttpClient internalClient;
-
     private BeforeRequestInterceptor beforeRequestInterceptor;
     private AfterRequestInterceptor<K> afterRequestInterceptor;
-
-    protected final List<RequestHeader> defaultHeaders = new ArrayList<>();
 
     public HttpClientImpl(Class<K> responseClass) {
         try {
@@ -58,58 +51,126 @@ public class HttpClientImpl<K extends HttpClientResponse> implements HttpClient<
 
     // ---- Builders without URL ----
     @Override
-    public HttpClientRequest<K> get()   { return new HttpClientRequest<>(this, Method.GET); }
+    public HttpClientRequest<K> get() {
+        return new HttpClientRequest<>(this, Method.GET);
+    }
+
     @Override
-    public HttpClientRequest<K> head()  { return new HttpClientRequest<>(this, Method.HEAD); }
+    public HttpClientRequest<K> head() {
+        return new HttpClientRequest<>(this, Method.HEAD);
+    }
+
     @Override
-    public HttpClientRequest<K> post()  { return new HttpClientRequest<>(this, Method.POST); }
+    public HttpClientRequest<K> post() {
+        return new HttpClientRequest<>(this, Method.POST);
+    }
+
     @Override
-    public HttpClientRequest<K> put()   { return new HttpClientRequest<>(this, Method.PUT); }
+    public HttpClientRequest<K> put() {
+        return new HttpClientRequest<>(this, Method.PUT);
+    }
+
     @Override
-    public HttpClientRequest<K> delete(){ return new HttpClientRequest<>(this, Method.DELETE); }
+    public HttpClientRequest<K> delete() {
+        return new HttpClientRequest<>(this, Method.DELETE);
+    }
+
     @Override
-    public HttpClientRequest<K> trace() { return new HttpClientRequest<>(this, Method.TRACE); }
+    public HttpClientRequest<K> trace() {
+        return new HttpClientRequest<>(this, Method.TRACE);
+    }
+
     @Override
-    public HttpClientRequest<K> options(){ return new HttpClientRequest<>(this, Method.OPTIONS); }
+    public HttpClientRequest<K> options() {
+        return new HttpClientRequest<>(this, Method.OPTIONS);
+    }
+
     @Override
-    public HttpClientRequest<K> patch() { return new HttpClientRequest<>(this, Method.PATCH); }
+    public HttpClientRequest<K> patch() {
+        return new HttpClientRequest<>(this, Method.PATCH);
+    }
 
     // ---- Builders with String URL ----
     @Override
-    public HttpClientRequest<K> get(String url) throws URISyntaxException { return new HttpClientRequest<>(this, Method.GET).setUrl(url); }
+    public HttpClientRequest<K> get(String url) throws URISyntaxException {
+        return new HttpClientRequest<>(this, Method.GET).setUrl(url);
+    }
 
     @Override
-    public HttpClientRequest<K> head(String url) throws URISyntaxException { return new HttpClientRequest<>(this, Method.HEAD).setUrl(url); }
+    public HttpClientRequest<K> head(String url) throws URISyntaxException {
+        return new HttpClientRequest<>(this, Method.HEAD).setUrl(url);
+    }
+
     @Override
-    public HttpClientRequest<K> post(String url) throws URISyntaxException { return new HttpClientRequest<>(this, Method.POST).setUrl(url); }
+    public HttpClientRequest<K> post(String url) throws URISyntaxException {
+        return new HttpClientRequest<>(this, Method.POST).setUrl(url);
+    }
+
     @Override
-    public HttpClientRequest<K> put(String url) throws URISyntaxException { return new HttpClientRequest<>(this, Method.PUT).setUrl(url); }
+    public HttpClientRequest<K> put(String url) throws URISyntaxException {
+        return new HttpClientRequest<>(this, Method.PUT).setUrl(url);
+    }
+
     @Override
-    public HttpClientRequest<K> delete(String url) throws URISyntaxException { return new HttpClientRequest<>(this, Method.DELETE).setUrl(url); }
+    public HttpClientRequest<K> delete(String url) throws URISyntaxException {
+        return new HttpClientRequest<>(this, Method.DELETE).setUrl(url);
+    }
+
     @Override
-    public HttpClientRequest<K> trace(String url) throws URISyntaxException { return new HttpClientRequest<>(this, Method.TRACE).setUrl(url); }
+    public HttpClientRequest<K> trace(String url) throws URISyntaxException {
+        return new HttpClientRequest<>(this, Method.TRACE).setUrl(url);
+    }
+
     @Override
-    public HttpClientRequest<K> options(String url) throws URISyntaxException { return new HttpClientRequest<>(this, Method.OPTIONS).setUrl(url); }
+    public HttpClientRequest<K> options(String url) throws URISyntaxException {
+        return new HttpClientRequest<>(this, Method.OPTIONS).setUrl(url);
+    }
+
     @Override
-    public HttpClientRequest<K> patch(String url) throws URISyntaxException { return new HttpClientRequest<>(this, Method.PATCH).setUrl(url); }
+    public HttpClientRequest<K> patch(String url) throws URISyntaxException {
+        return new HttpClientRequest<>(this, Method.PATCH).setUrl(url);
+    }
 
     // ---- Builders with URI ----
     @Override
-    public HttpClientRequest<K> get(URI url)    { return new HttpClientRequest<>(this, Method.GET).setUrl(url); }
+    public HttpClientRequest<K> get(URI url) {
+        return new HttpClientRequest<>(this, Method.GET).setUrl(url);
+    }
+
     @Override
-    public HttpClientRequest<K> head(URI url)   { return new HttpClientRequest<>(this, Method.HEAD).setUrl(url); }
+    public HttpClientRequest<K> head(URI url) {
+        return new HttpClientRequest<>(this, Method.HEAD).setUrl(url);
+    }
+
     @Override
-    public HttpClientRequest<K> post(URI url)   { return new HttpClientRequest<>(this, Method.POST).setUrl(url); }
+    public HttpClientRequest<K> post(URI url) {
+        return new HttpClientRequest<>(this, Method.POST).setUrl(url);
+    }
+
     @Override
-    public HttpClientRequest<K> put(URI url)    { return new HttpClientRequest<>(this, Method.PUT).setUrl(url); }
+    public HttpClientRequest<K> put(URI url) {
+        return new HttpClientRequest<>(this, Method.PUT).setUrl(url);
+    }
+
     @Override
-    public HttpClientRequest<K> delete(URI url) { return new HttpClientRequest<>(this, Method.DELETE).setUrl(url); }
+    public HttpClientRequest<K> delete(URI url) {
+        return new HttpClientRequest<>(this, Method.DELETE).setUrl(url);
+    }
+
     @Override
-    public HttpClientRequest<K> trace(URI url)  { return new HttpClientRequest<>(this, Method.TRACE).setUrl(url); }
+    public HttpClientRequest<K> trace(URI url) {
+        return new HttpClientRequest<>(this, Method.TRACE).setUrl(url);
+    }
+
     @Override
-    public HttpClientRequest<K> options(URI url){ return new HttpClientRequest<>(this, Method.OPTIONS).setUrl(url); }
+    public HttpClientRequest<K> options(URI url) {
+        return new HttpClientRequest<>(this, Method.OPTIONS).setUrl(url);
+    }
+
     @Override
-    public HttpClientRequest<K> patch(URI url)  { return new HttpClientRequest<>(this, Method.PATCH).setUrl(url); }
+    public HttpClientRequest<K> patch(URI url) {
+        return new HttpClientRequest<>(this, Method.PATCH).setUrl(url);
+    }
 
     @Override
     public HttpClientImpl<K> setInterceptor(BeforeRequestInterceptor interceptor) {
@@ -181,7 +242,7 @@ public class HttpClientImpl<K extends HttpClientResponse> implements HttpClient<
                                 handler.call(in);
                             }
                         } else {
-                            textResponse.text  = EntityUtils.toString(entity);
+                            textResponse.text = EntityUtils.toString(entity);
                         }
                     } finally {
                         EntityUtils.consume(entity);
@@ -206,7 +267,7 @@ public class HttpClientImpl<K extends HttpClientResponse> implements HttpClient<
         // Apply defaults first
         for (RequestHeader header : defaultHeaders) {
             if (header != null) {
-                builder.addHeader(header.getName(), header.getValue());
+                builder.addHeader(header.name(), header.value());
             }
         }
 
@@ -214,7 +275,7 @@ public class HttpClientImpl<K extends HttpClientResponse> implements HttpClient<
         if (headers != null) {
             for (RequestHeader header : headers) {
                 if (header != null) {
-                    builder.setHeader(header.getName(), header.getValue()); // setHeader overrides
+                    builder.setHeader(header.name(), header.value()); // setHeader overrides
                 }
             }
         }

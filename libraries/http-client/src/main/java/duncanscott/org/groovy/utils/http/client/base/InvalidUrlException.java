@@ -1,6 +1,8 @@
 package duncanscott.org.groovy.utils.http.client.base;
 
 public class InvalidUrlException extends RuntimeException {
+    private final String url;
+
     public InvalidUrlException(final String url) {
         this(url, "invalid URL [" + url + "]");
     }
@@ -13,6 +15,4 @@ public class InvalidUrlException extends RuntimeException {
     public final String getUrl() {
         return url;
     }
-
-    private final String url;
 }

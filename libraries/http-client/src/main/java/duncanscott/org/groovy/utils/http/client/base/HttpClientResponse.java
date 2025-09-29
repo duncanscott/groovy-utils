@@ -12,6 +12,7 @@ public class HttpClientResponse {
             HttpStatus.SC_CREATED,
             HttpStatus.SC_OK
     );
+    private TextResponse textResponse;
 
     public boolean getSuccess() {
         return successCodes.contains(getStatusCode());
@@ -69,6 +70,4 @@ public class HttpClientResponse {
     public void setTextResponse(TextResponse textResponse) {
         this.textResponse = textResponse;
     }
-
-    private TextResponse textResponse;
 }
