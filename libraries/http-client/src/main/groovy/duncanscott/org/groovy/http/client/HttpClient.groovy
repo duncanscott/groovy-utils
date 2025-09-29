@@ -42,60 +42,134 @@ class HttpClient<K extends HttpResponse> implements Closeable {
 
     // --- GET --- //
     K get(String url, Collection<RequestHeader> headers = null) {
-        ClassicRequestBuilder builder = ClassicRequestBuilder.get(url)
-        return execute(builder, headers)
+        return execute(ClassicRequestBuilder.get(url), headers)
     }
 
     K get(String url, InputStreamHandler streamHandler, Collection<RequestHeader> headers = null) {
+        return execute(ClassicRequestBuilder.get(url), headers, streamHandler)
+    }
+
+    protected K get(String url, String text, ContentType contentType, Collection<RequestHeader> headers = null) {
         ClassicRequestBuilder builder = ClassicRequestBuilder.get(url)
+        builder.setEntity(new StringEntity(text, contentType))
+        return execute(builder, headers)
+    }
+
+    protected K get(String url, String text, ContentType contentType, InputStreamHandler streamHandler, Collection<RequestHeader> headers = null) {
+        ClassicRequestBuilder builder = ClassicRequestBuilder.get(url)
+        builder.setEntity(new StringEntity(text, contentType))
+        return execute(builder, headers, streamHandler)
+    }
+
+    protected K get(String url, InputStream inputStream, Collection<RequestHeader> headers = null) {
+        ClassicRequestBuilder builder = ClassicRequestBuilder.get(url)
+        builder.setEntity(new InputStreamEntity(inputStream, ContentType.APPLICATION_OCTET_STREAM))
+        return execute(builder, headers)
+    }
+
+    protected K get(String url, InputStream inputStream, InputStreamHandler streamHandler, Collection<RequestHeader> headers = null) {
+        ClassicRequestBuilder builder = ClassicRequestBuilder.get(url)
+        builder.setEntity(new InputStreamEntity(inputStream, ContentType.APPLICATION_OCTET_STREAM))
         return execute(builder, headers, streamHandler)
     }
 
     // --- POST --- //
     K post(String url, Collection<RequestHeader> headers = null) {
-        ClassicRequestBuilder builder = ClassicRequestBuilder.post(url)
-        return execute(builder, headers)
+        return execute(ClassicRequestBuilder.post(url), headers)
     }
 
-    K post(String url, String text, ContentType contentType = ContentType.APPLICATION_JSON, Collection<RequestHeader> headers = null) {
+    K post(String url, InputStreamHandler streamHandler, Collection<RequestHeader> headers = null) {
+        return execute(ClassicRequestBuilder.post(url), headers, streamHandler)
+    }
+
+    protected K post(String url, String text, ContentType contentType, Collection<RequestHeader> headers = null) {
         ClassicRequestBuilder builder = ClassicRequestBuilder.post(url)
         builder.setEntity(new StringEntity(text, contentType))
         return execute(builder, headers)
     }
 
-    K post(String url, InputStream inputStream, Collection<RequestHeader> headers = null) {
+    protected K post(String url, String text, ContentType contentType, InputStreamHandler streamHandler, Collection<RequestHeader> headers = null) {
+        ClassicRequestBuilder builder = ClassicRequestBuilder.post(url)
+        builder.setEntity(new StringEntity(text, contentType))
+        return execute(builder, headers, streamHandler)
+    }
+
+    protected K post(String url, InputStream inputStream, Collection<RequestHeader> headers = null) {
         ClassicRequestBuilder builder = ClassicRequestBuilder.post(url)
         builder.setEntity(new InputStreamEntity(inputStream, ContentType.APPLICATION_OCTET_STREAM))
         return execute(builder, headers)
     }
 
-    K post(String url, InputStreamHandler streamHandler, Collection<RequestHeader> headers = null) {
+    protected K post(String url, InputStream inputStream, InputStreamHandler streamHandler, Collection<RequestHeader> headers = null) {
         ClassicRequestBuilder builder = ClassicRequestBuilder.post(url)
+        builder.setEntity(new InputStreamEntity(inputStream, ContentType.APPLICATION_OCTET_STREAM))
         return execute(builder, headers, streamHandler)
     }
 
     // --- PUT --- //
     K put(String url, Collection<RequestHeader> headers = null) {
-        ClassicRequestBuilder builder = ClassicRequestBuilder.put(url)
-        return execute(builder, headers)
+        return execute(ClassicRequestBuilder.put(url), headers)
     }
 
-    K put(String url, String text, ContentType contentType = ContentType.APPLICATION_JSON, Collection<RequestHeader> headers = null) {
+    K put(String url, InputStreamHandler streamHandler, Collection<RequestHeader> headers = null) {
+        return execute(ClassicRequestBuilder.put(url), headers, streamHandler)
+    }
+
+    protected K put(String url, String text, ContentType contentType, Collection<RequestHeader> headers = null) {
         ClassicRequestBuilder builder = ClassicRequestBuilder.put(url)
         builder.setEntity(new StringEntity(text, contentType))
         return execute(builder, headers)
     }
 
-    K put(String url, InputStream inputStream, Collection<RequestHeader> headers = null) {
+    protected K put(String url, String text, ContentType contentType, InputStreamHandler streamHandler, Collection<RequestHeader> headers = null) {
+        ClassicRequestBuilder builder = ClassicRequestBuilder.put(url)
+        builder.setEntity(new StringEntity(text, contentType))
+        return execute(builder, headers, streamHandler)
+    }
+
+    protected K put(String url, InputStream inputStream, Collection<RequestHeader> headers = null) {
         ClassicRequestBuilder builder = ClassicRequestBuilder.put(url)
         builder.setEntity(new InputStreamEntity(inputStream, ContentType.APPLICATION_OCTET_STREAM))
         return execute(builder, headers)
     }
 
+    protected K put(String url, InputStream inputStream, InputStreamHandler streamHandler, Collection<RequestHeader> headers = null) {
+        ClassicRequestBuilder builder = ClassicRequestBuilder.put(url)
+        builder.setEntity(new InputStreamEntity(inputStream, ContentType.APPLICATION_OCTET_STREAM))
+        return execute(builder, headers, streamHandler)
+    }
+
     // --- DELETE --- //
     K delete(String url, Collection<RequestHeader> headers = null) {
+        return execute(ClassicRequestBuilder.delete(url), headers)
+    }
+
+    K delete(String url, InputStreamHandler streamHandler, Collection<RequestHeader> headers = null) {
+        return execute(ClassicRequestBuilder.delete(url), headers, streamHandler)
+    }
+
+    protected K delete(String url, String text, ContentType contentType, Collection<RequestHeader> headers = null) {
         ClassicRequestBuilder builder = ClassicRequestBuilder.delete(url)
+        builder.setEntity(new StringEntity(text, contentType))
         return execute(builder, headers)
+    }
+
+    protected K delete(String url, String text, ContentType contentType, InputStreamHandler streamHandler, Collection<RequestHeader> headers = null) {
+        ClassicRequestBuilder builder = ClassicRequestBuilder.delete(url)
+        builder.setEntity(new StringEntity(text, contentType))
+        return execute(builder, headers, streamHandler)
+    }
+
+    protected K delete(String url, InputStream inputStream, Collection<RequestHeader> headers = null) {
+        ClassicRequestBuilder builder = ClassicRequestBuilder.delete(url)
+        builder.setEntity(new InputStreamEntity(inputStream, ContentType.APPLICATION_OCTET_STREAM))
+        return execute(builder, headers)
+    }
+
+    protected K delete(String url, InputStream inputStream, InputStreamHandler streamHandler, Collection<RequestHeader> headers = null) {
+        ClassicRequestBuilder builder = ClassicRequestBuilder.delete(url)
+        builder.setEntity(new InputStreamEntity(inputStream, ContentType.APPLICATION_OCTET_STREAM))
+        return execute(builder, headers, streamHandler)
     }
 
     // --- Hooks for subclasses --- //
@@ -130,14 +204,16 @@ class HttpClient<K extends HttpResponse> implements Closeable {
                 textResponse.locale = response.getLocale()
 
                 final HttpEntity entity = response.getEntity()
-                try {
-                    if (streamHandler != null) {
-                        entity.getContent().withStream(streamHandler.&call)
-                    } else {
-                        textResponse.text = EntityUtils.toString(entity)
+                if (entity != null) {
+                    try {
+                        if (streamHandler != null) {
+                            entity.getContent().withStream(streamHandler.&call)
+                        } else {
+                            textResponse.text = EntityUtils.toString(entity)
+                        }
+                    } finally {
+                        EntityUtils.consume(entity)
                     }
-                } finally {
-                    EntityUtils.consume(entity)
                 }
                 return null
         })
