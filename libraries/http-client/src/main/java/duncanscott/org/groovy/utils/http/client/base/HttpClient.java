@@ -38,21 +38,21 @@ public interface HttpClient<K extends HttpClientResponse> extends Closeable {
 
     HttpClientRequest<K> patch();
 
-    HttpClientRequest<K> get(String url);
+    HttpClientRequest<K> get(String url) throws URISyntaxException;
 
-    HttpClientRequest<K> head(String url);
+    HttpClientRequest<K> head(String url) throws URISyntaxException;
 
-    HttpClientRequest<K> post(String url);
+    HttpClientRequest<K> post(String url) throws URISyntaxException;
 
-    HttpClientRequest<K> put(String url);
+    HttpClientRequest<K> put(String url) throws URISyntaxException;
 
-    HttpClientRequest<K> delete(String url);
+    HttpClientRequest<K> delete(String url) throws URISyntaxException;
 
-    HttpClientRequest<K> trace(String url);
+    HttpClientRequest<K> trace(String url) throws URISyntaxException;
 
-    HttpClientRequest<K> options(String url);
+    HttpClientRequest<K> options(String url) throws URISyntaxException;
 
-    HttpClientRequest<K> patch(String url);
+    HttpClientRequest<K> patch(String url) throws URISyntaxException;
 
     HttpClientRequest<K> get(URI url);
 

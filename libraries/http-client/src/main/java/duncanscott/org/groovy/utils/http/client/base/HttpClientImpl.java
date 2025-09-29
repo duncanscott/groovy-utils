@@ -76,29 +76,22 @@ public class HttpClientImpl<K extends HttpClientResponse> implements HttpClient<
 
     // ---- Builders with String URL ----
     @Override
-    public HttpClientRequest<K> get(String url)    { return setUrlOrThrow(new HttpClientRequest<>(this, Method.GET), url); }
-    @Override
-    public HttpClientRequest<K> head(String url)   { return setUrlOrThrow(new HttpClientRequest<>(this, Method.HEAD), url); }
-    @Override
-    public HttpClientRequest<K> post(String url)   { return setUrlOrThrow(new HttpClientRequest<>(this, Method.POST), url); }
-    @Override
-    public HttpClientRequest<K> put(String url)    { return setUrlOrThrow(new HttpClientRequest<>(this, Method.PUT), url); }
-    @Override
-    public HttpClientRequest<K> delete(String url) { return setUrlOrThrow(new HttpClientRequest<>(this, Method.DELETE), url); }
-    @Override
-    public HttpClientRequest<K> trace(String url)  { return setUrlOrThrow(new HttpClientRequest<>(this, Method.TRACE), url); }
-    @Override
-    public HttpClientRequest<K> options(String url){ return setUrlOrThrow(new HttpClientRequest<>(this, Method.OPTIONS), url); }
-    @Override
-    public HttpClientRequest<K> patch(String url)  { return setUrlOrThrow(new HttpClientRequest<>(this, Method.PATCH), url); }
+    public HttpClientRequest<K> get(String url) throws URISyntaxException { return new HttpClientRequest<>(this, Method.GET).setUrl(url); }
 
-    private HttpClientRequest<K> setUrlOrThrow(HttpClientRequest<K> req, String url) {
-        try {
-            return req.setUrl(url);
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("Invalid URL: " + url, e);
-        }
-    }
+    @Override
+    public HttpClientRequest<K> head(String url) throws URISyntaxException { return new HttpClientRequest<>(this, Method.HEAD).setUrl(url); }
+    @Override
+    public HttpClientRequest<K> post(String url) throws URISyntaxException { return new HttpClientRequest<>(this, Method.POST).setUrl(url); }
+    @Override
+    public HttpClientRequest<K> put(String url) throws URISyntaxException { return new HttpClientRequest<>(this, Method.PUT).setUrl(url); }
+    @Override
+    public HttpClientRequest<K> delete(String url) throws URISyntaxException { return new HttpClientRequest<>(this, Method.DELETE).setUrl(url); }
+    @Override
+    public HttpClientRequest<K> trace(String url) throws URISyntaxException { return new HttpClientRequest<>(this, Method.TRACE).setUrl(url); }
+    @Override
+    public HttpClientRequest<K> options(String url) throws URISyntaxException { return new HttpClientRequest<>(this, Method.OPTIONS).setUrl(url); }
+    @Override
+    public HttpClientRequest<K> patch(String url) throws URISyntaxException { return new HttpClientRequest<>(this, Method.PATCH).setUrl(url); }
 
     // ---- Builders with URI ----
     @Override
