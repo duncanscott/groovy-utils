@@ -2,7 +2,9 @@ package duncanscott.org.groovy.http.json
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import duncanscott.org.groovy.http.client.HttpClientRequest
 import duncanscott.org.groovy.http.client.HttpClientResponse
+import duncanscott.org.groovy.http.xml.XmlHttpResponse
 import duncanscott.org.groovy.utils.ondemandcache.OnDemandCache
 
 class JsonHttpResponse extends HttpClientResponse {
@@ -21,6 +23,10 @@ class JsonHttpResponse extends HttpClientResponse {
             } as Closure<JsonNode>))
         }
         return null
+    }
+
+   JsonHttpResponse execute(HttpClientRequest request) {
+        return (JsonHttpResponse) super.execute(request)
     }
 
 }

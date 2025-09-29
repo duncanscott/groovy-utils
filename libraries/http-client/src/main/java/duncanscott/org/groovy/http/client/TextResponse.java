@@ -1,4 +1,4 @@
-package duncanscott.org.groovy.javautil.http;
+package duncanscott.org.groovy.http.client;
 
 import java.util.Locale;
 

@@ -1,6 +1,6 @@
 package duncanscott.org.groovy.http.handler
 
-import duncanscott.org.groovy.javautil.http.InputStreamHandler
+import duncanscott.org.groovy.http.client.InputStreamHandler
 
 class InputStreamToClosure implements InputStreamHandler {
 

@@ -1,6 +1,6 @@
 package duncanscott.org.groovy.http.client
 
-import duncanscott.org.groovy.javautil.http.TextResponse
+
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient
 import org.apache.hc.client5.http.impl.classic.HttpClients
 import org.apache.hc.core5.http.*
@@ -36,122 +36,122 @@ class HttpClientImpl<K extends HttpClientResponse> implements HttpClient, Closea
     }
 
     @Override
-    HttpClientRequest get() {
+    HttpClientRequest<K> get() {
         new HttpClientRequest(this, Method.GET)
     }
 
     @Override
-    HttpClientRequest head() {
+    HttpClientRequest<K> head() {
         new HttpClientRequest(this, Method.HEAD)
     }
 
     @Override
-    HttpClientRequest post() {
+    HttpClientRequest<K> post() {
         new HttpClientRequest(this, Method.POST)
     }
 
     @Override
-    HttpClientRequest put() {
+    HttpClientRequest<K> put() {
         new HttpClientRequest(this, Method.PUT)
     }
 
     @Override
-    HttpClientRequest delete() {
+    HttpClientRequest<K> delete() {
         new HttpClientRequest(this, Method.DELETE)
     }
 
     @Override
-    HttpClientRequest trace() {
+    HttpClientRequest<K> trace() {
         new HttpClientRequest(this, Method.TRACE)
     }
 
     @Override
-    HttpClientRequest options() {
+    HttpClientRequest<K> options() {
         new HttpClientRequest(this, Method.OPTIONS)
     }
 
     @Override
-    HttpClientRequest patch() {
+    HttpClientRequest<K> patch() {
         new HttpClientRequest(this, Method.PATCH)
     }
 
     @Override
-    HttpClientRequest get(String url) {
+    HttpClientRequest<K> get(String url) {
         new HttpClientRequest(this, Method.GET).setUrl(url)
     }
 
     @Override
-    HttpClientRequest head(String url) {
+    HttpClientRequest<K> head(String url) {
         new HttpClientRequest(this, Method.HEAD).setUrl(url)
     }
 
     @Override
-    HttpClientRequest post(String url) {
+    HttpClientRequest<K> post(String url) {
         new HttpClientRequest(this, Method.POST).setUrl(url)
     }
 
     @Override
-    HttpClientRequest put(String url) {
+    HttpClientRequest<K> put(String url) {
         new HttpClientRequest(this, Method.PUT).setUrl(url)
     }
 
     @Override
-    HttpClientRequest delete(String url) {
+    HttpClientRequest<K> delete(String url) {
         new HttpClientRequest(this, Method.DELETE).setUrl(url)
     }
 
     @Override
-    HttpClientRequest trace(String url) {
+    HttpClientRequest<K> trace(String url) {
         new HttpClientRequest(this, Method.TRACE).setUrl(url)
     }
 
     @Override
-    HttpClientRequest options(String url) {
+    HttpClientRequest<K> options(String url) {
         new HttpClientRequest(this, Method.OPTIONS).setUrl(url)
     }
 
     @Override
-    HttpClientRequest patch(String url) {
+    HttpClientRequest<K> patch(String url) {
         new HttpClientRequest(this, Method.PATCH).setUrl(url)
     }
 
     @Override
-    HttpClientRequest get(URI url) {
+    HttpClientRequest<K> get(URI url) {
         new HttpClientRequest(this, Method.GET).setUrl(url)
     }
 
     @Override
-    HttpClientRequest head(URI url) {
+    HttpClientRequest<K> head(URI url) {
         new HttpClientRequest(this, Method.HEAD).setUrl(url)
     }
 
     @Override
-    HttpClientRequest post(URI url) {
+    HttpClientRequest<K> post(URI url) {
         new HttpClientRequest(this, Method.POST).setUrl(url)
     }
 
     @Override
-    HttpClientRequest put(URI url) {
+    HttpClientRequest<K> put(URI url) {
         new HttpClientRequest(this, Method.PUT).setUrl(url)
     }
 
     @Override
-    HttpClientRequest delete(URI url) {
+    HttpClientRequest<K> delete(URI url) {
         new HttpClientRequest(this, Method.DELETE).setUrl(url)
     }
 
     @Override
-    HttpClientRequest trace(URI url) {
+    HttpClientRequest<K> trace(URI url) {
         new HttpClientRequest(this, Method.TRACE).setUrl(url)
     }
 
     @Override
-    HttpClientRequest options(URI url) {
+    HttpClientRequest<K> options(URI url) {
         new HttpClientRequest(this, Method.OPTIONS).setUrl(url)
     }
 
     @Override
-    HttpClientRequest patch(URI url) {
+    HttpClientRequest<K> patch(URI url) {
         new HttpClientRequest(this, Method.PATCH).setUrl(url)
     }
 
@@ -171,7 +171,8 @@ class HttpClientImpl<K extends HttpClientResponse> implements HttpClient, Closea
         ContentType.TEXT_PLAIN
     }
 
-    K execute(HttpClientRequest request) {
+    @Override
+    K execute(HttpClientRequest<K> request) {
         ClassicRequestBuilder requestBuilder = request.requestBuilder
         URI uri = requestBuilder.uri
         if (uri == null) throw new InvalidUrlException("URL cannot be null")

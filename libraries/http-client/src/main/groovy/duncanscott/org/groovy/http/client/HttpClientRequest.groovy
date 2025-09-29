@@ -1,7 +1,6 @@
 package duncanscott.org.groovy.http.client
 
 
-import duncanscott.org.groovy.javautil.http.InputStreamHandler
 import org.apache.hc.core5.http.ContentType
 import org.apache.hc.core5.http.Method
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder

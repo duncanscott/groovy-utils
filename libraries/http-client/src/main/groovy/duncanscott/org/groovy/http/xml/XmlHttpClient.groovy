@@ -1,6 +1,7 @@
 package duncanscott.org.groovy.http.xml
 
 import duncanscott.org.groovy.http.client.HttpClientImpl
+import duncanscott.org.groovy.http.client.HttpClientRequest
 import duncanscott.org.groovy.http.client.RequestHeader
 import org.apache.hc.core5.http.HttpHeaders
 
@@ -16,4 +17,7 @@ class XmlHttpClient extends HttpClientImpl<XmlHttpResponse> {
         defaultHeaders.add(new RequestHeader(HttpHeaders.CONTENT_TYPE, 'application/xml'))
     }
 
+    XmlHttpResponse execute(HttpClientRequest request) {
+        return (XmlHttpResponse) super.execute(request)
+    }
 }

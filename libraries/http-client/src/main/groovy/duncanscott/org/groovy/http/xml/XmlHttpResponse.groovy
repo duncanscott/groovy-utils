@@ -20,4 +20,5 @@ class XmlHttpResponse extends HttpClientResponse {
         return null
     }
 
+
 }
