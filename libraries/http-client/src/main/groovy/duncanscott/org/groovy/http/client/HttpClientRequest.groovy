@@ -3,11 +3,12 @@ package duncanscott.org.groovy.http.client
 
 import duncanscott.org.groovy.javautil.http.InputStreamHandler
 import org.apache.hc.core5.http.ContentType
-import  org.apache.hc.core5.http.Method
+import org.apache.hc.core5.http.Method
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder
 
-class Request {
+class HttpClientRequest<K extends HttpClientResponse> {
 
+    final HttpClient<K> httpClient
     final Method method
     private URI url
     private Collection<RequestHeader> headers
@@ -16,8 +17,13 @@ class Request {
     private InputStreamHandler streamHandler
     private ContentType contentType
 
-    Request(Method method) {
+    HttpClientRequest(HttpClient<K> httpClient, Method method) {
+        this.httpClient = httpClient
         this.method = method
+    }
+
+    K execute() {
+        httpClient.execute(this)
     }
 
     ClassicRequestBuilder getRequestBuilder() {
@@ -33,7 +39,7 @@ class Request {
             case Method.DELETE:
                 return ClassicRequestBuilder.delete(url)
             case Method.CONNECT:
-                return ClassicRequestBuilder.connect(url)
+                throw new Exception('CONNECT not supported')
             case Method.TRACE:
                 return ClassicRequestBuilder.trace(url)
             case Method.OPTIONS:
@@ -43,22 +49,22 @@ class Request {
         }
     }
 
-    Request setUrl(URI url) {
+    HttpClientRequest setUrl(URI url) {
         this.url = url
         return this
     }
 
-    Request setUrl(String url) {
+    HttpClientRequest setUrl(String url) {
         this.url = new URI(url)
         return this
     }
 
-    Request setHeaders(Collection<RequestHeader> headers) {
+    HttpClientRequest setHeaders(Collection<RequestHeader> headers) {
         this.headers = headers
         return this
     }
 
-    Request addHeader(RequestHeader header) {
+    HttpClientRequest addHeader(RequestHeader header) {
         if (headers == null) {
             headers = []
         }
@@ -66,7 +72,7 @@ class Request {
         return this
     }
 
-    Request addHeaders(Collection<RequestHeader> headers) {
+    HttpClientRequest addHeaders(Collection<RequestHeader> headers) {
         if (this.headers == null && headers) {
             this.headers = []
         }
@@ -76,24 +82,24 @@ class Request {
         return this
     }
 
-    Request setBody(String body) {
+    HttpClientRequest setBody(String body) {
         this.body = body
         this.inputStream = null
         return this
     }
 
-    Request setInputStream(InputStream inputStream) {
+    HttpClientRequest setInputStream(InputStream inputStream) {
         this.inputStream = inputStream
         this.body = null
         return this
     }
 
-    Request setStreamHandler(InputStreamHandler streamHandler) {
+    HttpClientRequest setStreamHandler(InputStreamHandler streamHandler) {
         this.streamHandler = streamHandler
         return this
     }
 
-    Request setContentType(ContentType contentType) {
+    HttpClientRequest setContentType(ContentType contentType) {
         this.contentType = contentType
         return this
     }
