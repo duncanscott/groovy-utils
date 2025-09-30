@@ -22,4 +22,8 @@ class JsonHttpClient extends HttpClientImpl<JsonHttpResponse> {
         return ContentType.APPLICATION_JSON
     }
 
+    protected JsonHttpResponse getResponseInstance() {
+        return new JsonHttpResponse();
+    }
+
 }

@@ -21,4 +21,8 @@ class XmlHttpClient extends HttpClientImpl<XmlHttpResponse> {
         return ContentType.APPLICATION_XML
     }
 
+    protected XmlHttpResponse getResponseInstance() {
+        return new XmlHttpResponse();
+    }
+
 }

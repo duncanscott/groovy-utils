@@ -10,7 +10,6 @@ import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -22,17 +21,13 @@ import java.util.List;
 public class HttpClientImpl<K extends HttpClientResponse> implements HttpClient<K>, Closeable {
 
     protected final List<RequestHeader> defaultHeaders = new ArrayList<>();
-    private final Constructor<K> responseConstructor;
+    private final Class<K> responseClass;
     private final CloseableHttpClient internalClient;
     private BeforeRequestInterceptor beforeRequestInterceptor;
     private AfterRequestInterceptor<K> afterRequestInterceptor;
 
     public HttpClientImpl(Class<K> responseClass) {
-        try {
-            this.responseConstructor = responseClass.getDeclaredConstructor();
-        } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException("Response class must have a public no-arg constructor", e);
-        }
+        this.responseClass = responseClass;
         this.internalClient = HttpClients.createDefault();
     }
 
@@ -189,6 +184,16 @@ public class HttpClientImpl<K extends HttpClientResponse> implements HttpClient<
         return ContentType.TEXT_PLAIN;
     }
 
+    protected K getResponseInstance() {
+        try {
+            return responseClass.getDeclaredConstructor().newInstance();
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException("Response class must have a public no-arg constructor", e);
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException("Failed to instantiate response type " + responseClass.getName(), e);
+        }
+    }
+
     @Override
     public K execute(HttpClientRequest<K> request) throws URISyntaxException {
         ClassicRequestBuilder requestBuilder = request.getRequestBuilder();
@@ -212,12 +217,7 @@ public class HttpClientImpl<K extends HttpClientResponse> implements HttpClient<
 
         ClassicHttpRequest httpRequest = requestBuilder.build();
 
-        K httpResponse;
-        try {
-            httpResponse = responseConstructor.newInstance();
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException("Failed to instantiate response type", e);
-        }
+        K httpResponse = getResponseInstance();
 
         TextResponse textResponse = new TextResponse();
         textResponse.requestUri = httpRequest.getUri().toString();
