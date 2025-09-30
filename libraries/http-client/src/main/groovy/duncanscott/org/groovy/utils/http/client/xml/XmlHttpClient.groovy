@@ -21,7 +21,7 @@ class XmlHttpClient extends AbstractHttpClient<XmlHttpResponse> {
     }
 
     protected XmlHttpResponse newResponseInstance() {
-        return new XmlHttpResponse();
+        return new XmlHttpResponse()
     }
 
 }

@@ -22,7 +22,7 @@ class JsonHttpClient extends AbstractHttpClient<JsonHttpResponse> {
     }
 
     protected JsonHttpResponse newResponseInstance() {
-        return new JsonHttpResponse();
+        return new JsonHttpResponse()
     }
 
 }
