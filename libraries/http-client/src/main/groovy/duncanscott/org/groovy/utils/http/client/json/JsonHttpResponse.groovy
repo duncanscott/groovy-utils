@@ -13,15 +13,12 @@ class JsonHttpResponse extends HttpClientResponse {
     final OnDemandCache<JsonNode> cachedJson = new OnDemandCache<>()
 
     JsonNode getJson() {
-        if (cachedJson.cachedObject) {
-            return cachedJson.cachedObject
+        if (text == null) {
+            return null
         }
-        if (text != null) {
-            return cachedJson.fetch(({
-                MAPPER.readTree(text)
-            } as Closure<JsonNode>))
-        }
-        return null
+        return cachedJson.fetch(({
+            MAPPER.readTree(text)
+        } as Closure<JsonNode>))
     }
 
     JsonHttpResponse execute(HttpClientRequest request) {
