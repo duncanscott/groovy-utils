@@ -18,26 +18,26 @@ import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 
-public class HttpClientImpl<K extends HttpClientResponse> implements HttpClient<K>, Closeable {
+public abstract class AbstractHttpClient<K extends HttpClientResponse> implements HttpClient<K>, Closeable {
 
     protected final List<RequestHeader> defaultHeaders = new ArrayList<>();
-    private final Class<K> responseClass;
     private final CloseableHttpClient internalClient;
     private BeforeRequestInterceptor beforeRequestInterceptor;
     private AfterRequestInterceptor<K> afterRequestInterceptor;
 
-    public HttpClientImpl(Class<K> responseClass) {
-        this.responseClass = responseClass;
+    public AbstractHttpClient() {
         this.internalClient = HttpClients.createDefault();
     }
 
     @Override
-    public HttpClientImpl<K> setAuthorizationHeader(String username, String password) {
+    public AbstractHttpClient<K> setAuthorizationHeader(String username, String password) {
         String basic = username + ":" + password;
         String basicHash = "Basic " + Base64.getEncoder().encodeToString(basic.getBytes(StandardCharsets.UTF_8));
         defaultHeaders.add(new RequestHeader(HttpHeaders.AUTHORIZATION, basicHash));
         return this;
     }
+
+    protected abstract K newResponseInstance();
 
     @Override
     public void close() throws IOException {
@@ -168,13 +168,13 @@ public class HttpClientImpl<K extends HttpClientResponse> implements HttpClient<
     }
 
     @Override
-    public HttpClientImpl<K> setInterceptor(BeforeRequestInterceptor interceptor) {
+    public AbstractHttpClient<K> setInterceptor(BeforeRequestInterceptor interceptor) {
         this.beforeRequestInterceptor = interceptor;   // fixed: assign the parameter
         return this;
     }
 
     @Override
-    public HttpClientImpl<K> setInterceptor(AfterRequestInterceptor<K> interceptor) {
+    public AbstractHttpClient<K> setInterceptor(AfterRequestInterceptor<K> interceptor) {
         this.afterRequestInterceptor = interceptor;    // fixed: assign the parameter
         return this;
     }
@@ -182,16 +182,6 @@ public class HttpClientImpl<K extends HttpClientResponse> implements HttpClient<
     @Override
     public ContentType getDefaultRequestContentType() {
         return ContentType.TEXT_PLAIN;
-    }
-
-    protected K newResponseInstance() {
-        try {
-            return responseClass.getDeclaredConstructor().newInstance();
-        } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException("Response class must have a public no-arg constructor", e);
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException("Failed to instantiate response type " + responseClass.getName(), e);
-        }
     }
 
     @Override
