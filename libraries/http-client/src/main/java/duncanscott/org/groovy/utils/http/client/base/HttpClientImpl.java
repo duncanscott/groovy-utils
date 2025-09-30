@@ -184,7 +184,7 @@ public class HttpClientImpl<K extends HttpClientResponse> implements HttpClient<
         return ContentType.TEXT_PLAIN;
     }
 
-    protected K getResponseInstance() {
+    protected K newResponseInstance() {
         try {
             return responseClass.getDeclaredConstructor().newInstance();
         } catch (NoSuchMethodException e) {
@@ -217,7 +217,7 @@ public class HttpClientImpl<K extends HttpClientResponse> implements HttpClient<
 
         ClassicHttpRequest httpRequest = requestBuilder.build();
 
-        K httpResponse = getResponseInstance();
+        K httpResponse = newResponseInstance();
 
         TextResponse textResponse = new TextResponse();
         textResponse.requestUri = httpRequest.getUri().toString();
