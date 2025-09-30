@@ -12,8 +12,8 @@ class XmlHttpClient extends AbstractHttpClient<XmlHttpResponse> {
     }
 
     private void setHeaders() {
-        defaultHeaders.add(new RequestHeader(HttpHeaders.ACCEPT, 'application/xml'))
-        defaultHeaders.add(new RequestHeader(HttpHeaders.CONTENT_TYPE, 'application/xml'))
+        defaultHeaders.add(new RequestHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_XML.mimeType))
+        defaultHeaders.add(new RequestHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_XML.mimeType))
     }
 
     ContentType getDefaultRequestContentType() {

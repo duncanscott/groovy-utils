@@ -13,8 +13,8 @@ class JsonHttpClient extends AbstractHttpClient<JsonHttpResponse> {
     }
 
     private void setHeaders() {
-        defaultHeaders.add(new RequestHeader(HttpHeaders.ACCEPT, 'application/json'))
-        defaultHeaders.add(new RequestHeader(HttpHeaders.CONTENT_TYPE, 'application/json'))
+        defaultHeaders.add(new RequestHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.mimeType))
+        defaultHeaders.add(new RequestHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.mimeType))
     }
 
     ContentType getDefaultRequestContentType() {
