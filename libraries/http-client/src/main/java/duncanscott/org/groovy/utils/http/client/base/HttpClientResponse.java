@@ -12,18 +12,15 @@ public class HttpClientResponse {
     }
 
     public String getRequestUri() {
-        final TextResponse response = textResponse;
-        return (response == null ? null : response.requestUri);
+        return (textResponse == null ? null : textResponse.requestUri);
     }
 
     public String getRequestMethod() {
-        final TextResponse response = textResponse;
-        return (response == null ? null : response.requestMethod);
+        return (textResponse == null ? null : textResponse.requestMethod);
     }
 
     public String getText() {
-        final TextResponse response = textResponse;
-        return (response == null ? null : response.text);
+        return (textResponse == null ? null : textResponse.text);
     }
 
     public int getStatusCode() {
@@ -31,13 +28,11 @@ public class HttpClientResponse {
     }
 
     public String getReasonPhrase() {
-        final TextResponse response = textResponse;
-        return (response == null ? null : response.reasonPhrase);
+        return (textResponse == null ? null : textResponse.reasonPhrase);
     }
 
     public Locale getLocal() {
-        final TextResponse response = textResponse;
-        return (response == null ? null : response.locale);
+        return (textResponse == null ? null : textResponse.locale);
     }
 
     public String toString() {
