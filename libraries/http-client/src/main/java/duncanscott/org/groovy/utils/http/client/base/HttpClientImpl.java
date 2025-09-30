@@ -213,7 +213,7 @@ public class HttpClientImpl<K extends HttpClientResponse> implements HttpClient<
             requestBuilder.setEntity(new StringEntity(request.getBody(), ct));
         }
 
-        addHeaders(requestBuilder, request.getHeaders());
+        addHeaders(requestBuilder, request);
 
         ClassicHttpRequest httpRequest = requestBuilder.build();
 
@@ -263,7 +263,7 @@ public class HttpClientImpl<K extends HttpClientResponse> implements HttpClient<
         return httpResponse;
     }
 
-    private void addHeaders(ClassicRequestBuilder builder, Collection<RequestHeader> headers) {
+    protected void addHeaders(ClassicRequestBuilder builder, HttpClientRequest<K> request) {
         // Apply defaults first
         for (RequestHeader header : defaultHeaders) {
             if (header != null) {
@@ -271,12 +271,15 @@ public class HttpClientImpl<K extends HttpClientResponse> implements HttpClient<
             }
         }
 
-        // Apply per-request headers, potentially overriding defaults
-        if (headers != null) {
-            for (RequestHeader header : headers) {
-                if (header != null) {
-                    builder.setHeader(header.name(), header.value()); // setHeader overrides
-                }
+        // Apply request-specific headers, potentially overriding defaults, note use of setHeader
+        List<RequestHeader> headers = new ArrayList<>();
+        Collection<RequestHeader> requestHeaders = request.getHeaders();
+        if (requestHeaders != null) {
+            headers.addAll(requestHeaders);
+        }
+        for (RequestHeader header : headers) {
+            if (header != null) {
+                builder.setHeader(header.name(), header.value()); // setHeader overrides
             }
         }
     }
