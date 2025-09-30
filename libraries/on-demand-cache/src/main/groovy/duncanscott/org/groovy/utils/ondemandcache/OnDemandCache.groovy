@@ -41,12 +41,12 @@ class OnDemandCache<K> {
             cacheClosureOutput(fetchClosure)
             value = cachedObject
         }
-        return (value == NULL_SENTINEL) ? null : (K) value
+        return (value?.is(NULL_SENTINEL)) ? null : (K) value
     }
 
     K getCachedObject() {
         Object value = cachedObject
-        return (value == NULL_SENTINEL) ? null : (K) value
+        return (value?.is(NULL_SENTINEL)) ? null : (K) value
     }
 
     void clear() {
