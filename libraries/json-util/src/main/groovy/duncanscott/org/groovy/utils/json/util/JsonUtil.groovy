@@ -1,10 +1,10 @@
 package duncanscott.org.groovy.utils.json.util
 
-import com.fasterxml.jackson.core.JsonProcessingException
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.ArrayNode
-import com.fasterxml.jackson.databind.node.ObjectNode
+import tools.jackson.core.JacksonException
+import tools.jackson.databind.JsonNode
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.databind.node.ArrayNode
+import tools.jackson.databind.node.ObjectNode
 import groovy.lang.GroovyObject
 import groovy.lang.MetaClass
 import groovy.util.logging.Slf4j
@@ -12,7 +12,7 @@ import groovy.util.logging.Slf4j
 @Slf4j
 class JsonUtil {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper()
+    private static final JsonMapper MAPPER = JsonMapper.builder().build()
 
     static boolean isNull(Object obj) {
         if (obj instanceof JsonNode) {
@@ -73,7 +73,7 @@ class JsonUtil {
         if (o instanceof JsonNode) {
             try {
                 return MAPPER.writeValueAsString(o)
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 log.warn("Failed to serialize JsonNode to string, falling back to toString()", e)
                 return o.toString()
             }
@@ -144,7 +144,7 @@ class JsonUtil {
 
     static ObjectNode removeNulls(ObjectNode json) {
         ObjectNode clean = MAPPER.createObjectNode()
-        json.fields().each { Map.Entry<String, JsonNode> entry ->
+        json.properties().each { Map.Entry<String, JsonNode> entry ->
             String key = entry.getKey()
             JsonNode val = entry.getValue()
             if (val.isObject()) {

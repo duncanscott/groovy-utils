@@ -1,8 +1,8 @@
 package duncanscott.org.groovy.utils.json.util
 
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.node.ArrayNode
-import com.fasterxml.jackson.databind.node.ObjectNode
+import tools.jackson.databind.JsonNode
+import tools.jackson.databind.node.ArrayNode
+import tools.jackson.databind.node.ObjectNode
 import groovy.util.logging.Slf4j
 import org.codehaus.groovy.runtime.StackTraceUtils
 
@@ -37,7 +37,7 @@ class JsonEqual {
     }
 
     private static void checkObjectsEqual(ObjectNode o1, ObjectNode o2) {
-        Set<String> keys = o1.fieldNames().toSet() + o2.fieldNames().toSet()
+        Set<String> keys = o1.propertyNames().toSet() + o2.propertyNames().toSet()
         keys.each { String key ->
             log "checking map values equal for key ${key}: ${o1.get(key)} ${o2.get(key)}"
             checkElementsEqual(o1.get(key), o2.get(key))

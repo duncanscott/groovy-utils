@@ -1,8 +1,8 @@
 package duncanscott.org.groovy.utils.json.util
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.ArrayNode
-import com.fasterxml.jackson.databind.node.ObjectNode
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.databind.node.ArrayNode
+import tools.jackson.databind.node.ObjectNode
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -10,7 +10,7 @@ import java.time.ZoneId
 
 class DateUtilSpec extends Specification {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper()
+    private static final JsonMapper MAPPER = JsonMapper.builder().build()
 
     private Date ldToDate(LocalDate localDate) {
         return Date.from(localDate.atStartOfDay(ZoneId.of("America/Los_Angeles")).toInstant())

@@ -1,7 +1,7 @@
 package duncanscott.org.groovy.utils.json.util
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.ArrayNode
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.databind.node.ArrayNode
 import groovy.util.logging.Slf4j
 
 import java.text.SimpleDateFormat
@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat
 @Slf4j
 class DateUtil {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper()
+    private static final JsonMapper MAPPER = JsonMapper.builder().build()
 
     static final String UTC = 'UTC'
     static final TimeZone greenwichMeanTime = TimeZone.getTimeZone(UTC)

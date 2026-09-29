@@ -12,6 +12,23 @@ Dependencies are downloaded from Maven Central. The HTTP client integration test
 also reads a public fixture from `gist.githubusercontent.com`, so tests require
 network access. Artifactory credentials are no longer used.
 
+## Jackson 3 compatibility
+
+The `main` branch uses Jackson 3.2.3 through
+`tools.jackson.core:jackson-databind`. The `json-util` and `http-client` APIs now
+accept and return Jackson 3 tree types such as `tools.jackson.databind.JsonNode`,
+`ObjectNode`, and `ArrayNode`. Consumers using these types must migrate their
+imports and use Jackson 3; Jackson 2 tree types cannot be passed to these APIs.
+Jackson annotations still use the compatible `com.fasterxml.jackson.annotation`
+package supplied transitively by databind. See the
+[Jackson 3 migration guide](https://github.com/FasterXML/jackson/blob/main/jackson3/MIGRATING_TO_JACKSON_3.md).
+The HTTP client depends on Groovy core and XML directly; it does not pull in
+the unused Groovy YAML module and its Jackson 2 dependencies.
+
+The release version is `11.0.0-jackson-3x`. Existing date helpers retain their
+UTC string format and date-array behavior. Java 17 and Gradle 9.1.0 remain the
+build requirements.
+
 ## Publish with GitLab CI/CD
 
 The root `.gitlab-ci.yml` runs only for **tag pushes** matching
@@ -105,9 +122,9 @@ The release tasks (`getGitBranch`, `checkLocalTag`, `checkRemoteTag`,
 
 ## Later use by json-message
 
-The current version is `10.0.0`, so a matching release publishes
-`org.duncanscott:enum-util:10.0.0`. The existing `json-message` dependency on
-`5.10.1` will need a separate version and repository update after publication.
+The current version is `11.0.0-jackson-3x`, so a matching release publishes
+`org.duncanscott:enum-util:11.0.0-jackson-3x` along with the other four libraries.
+Downstream projects can update their dependency versions after publication.
 No changes to `json-message` are part of this migration.
 
 Its dependency repository can use this project's Maven endpoint:
