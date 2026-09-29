@@ -1,0 +1,47 @@
+workflow:
+  rules:
+    # Match json-message: release pipelines run only for numeric tag pushes.
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_TAG =~ /^[0-9]+(\.[0-9]+)*$/'
+    - when: never
+
+default:
+  image: eclipse-temurin:17-jdk
+  tags:
+    - docker-build
+
+stages:
+  - publish
+
+variables:
+  GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
+
+build-and-publish:
+  stage: publish
+  cache:
+    key:
+      files:
+        - gradle/wrapper/gradle-wrapper.properties
+        - gradle.properties
+    paths:
+      - .gradle/caches/
+      - .gradle/wrapper/
+  script:
+    - |
+      project_version="$(sed -n 's/^version=//p' gradle.properties | tr -d '\r')"
+      if [ "$CI_COMMIT_TAG" != "$project_version" ]; then
+        echo "Git tag ($CI_COMMIT_TAG) does not match gradle.properties version ($project_version)" >&2
+        exit 1
+      fi
+    - chmod +x gradlew
+    # Finish verification for every library before uploading any packages.
+    - ./gradlew --no-daemon --no-configuration-cache check
+    - ./gradlew --no-daemon --no-configuration-cache publishAllPublicationsToGitLabRepository
+  artifacts:
+    when: always
+    expire_in: 30 days
+    paths:
+      - libraries/*/build/libs/*.jar
+      - libraries/*/build/publications/mavenJava/
+      - libraries/*/build/reports/tests/
+    reports:
+      junit: libraries/*/build/test-results/**/*.xml

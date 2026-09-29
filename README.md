@@ -1,1 +1,111 @@
 # groovy-utils
+
+## Build and test
+
+Install Java 17 and run the Gradle wrapper from the project root:
+
+```sh
+./gradlew --no-daemon --no-configuration-cache check assemble
+```
+
+Dependencies are downloaded from Maven Central. The HTTP client integration test
+also reads a public fixture from `gist.githubusercontent.com`, so tests require
+network access. Artifactory credentials are no longer used.
+
+## Publish with GitLab CI/CD
+
+The root `.gitlab-ci.yml` runs only for **tag pushes** matching
+`^[0-9]+(\.[0-9]+)*$`, the same rule as `json-message`. Examples include `10`,
+`10.0`, and `10.0.0`; `v10.0.0` and `10.0.0-SNAPSHOT` are rejected. Branch pushes,
+merge requests, schedules, and manually created pipelines do not create release
+pipelines. The tag must exactly match `version` in `gradle.properties`.
+
+The pipeline runs all libraries' checks before publishing any package. It then
+publishes the following artifacts, using `org.duncanscott` as the Maven group
+and the shared version from `gradle.properties`:
+
+- `enum-util`
+- `http-client`
+- `json-util`
+- `on-demand-cache`
+- `web-util`
+
+Each publication retains its main JAR, sources JAR, POM, Gradle module metadata,
+and the existing additional `gradle.properties` artifact. JARs, publication
+metadata, and test reports are also retained as CI job artifacts for 30 days.
+
+Packages are uploaded to this project's GitLab Maven registry:
+
+```text
+$CI_API_V4_URL/projects/$CI_PROJECT_ID/packages/maven
+```
+
+Gradle authenticates with the automatically supplied `CI_JOB_TOKEN` using the
+`Job-Token` header, following the
+[GitLab Maven registry documentation](https://docs.gitlab.com/user/packages/maven_repository/).
+No manually stored publishing token or Artifactory configuration is needed.
+
+Before pushing the first release tag:
+
+1. Confirm that the package registry is enabled for this GitLab project.
+2. Make a **Docker executor** runner with the `docker-build` tag available to the
+   project, or update `.gitlab-ci.yml` to use an available Docker runner's tag.
+   The tag follows the existing PPS pipeline example; its executor must be
+   confirmed. The `eclipse-temurin:17-jdk` image supplies Java 17. This job needs
+   neither Docker-in-Docker nor privileged mode.
+3. Review the intended release version and working changes, then use the release
+   helper below (or commit and push the matching tag manually). Disable any
+   existing Artifactory publishing automation when switching releases to GitLab.
+
+## Create a release tag
+
+The `tag.sh` helper follows the `json-message` workflow:
+
+```sh
+./tag.sh
+```
+
+It checks the current version against local tags and tags on **every configured
+remote**, incrementing the final numeric component until it finds an unused
+version. It updates only the `version=` line in `gradle.properties`, stages all
+working changes (including untracked files), commits them as `version <version>`,
+and creates an annotated tag. If there are no changes, it tags the existing
+commit. It then pushes the current branch and **only the new tag** to each remote.
+With the current checkout, that includes both GitLab (`origin`) and GitHub (`hub`).
+The GitLab tag push triggers the CI pipeline.
+
+Review your working tree before running this helper: it commits all changes.
+It requires a checked-out branch and access to every configured remote, and
+stops if a Git command fails. Pushes to multiple remotes are sequential, so a
+failure may leave earlier remotes updated. It does not run tests locally; CI
+runs them before package publication.
+
+The wrapper locates the project directory and falls back to an installed SDKMAN
+or macOS JDK if `JAVA_HOME` is invalid. Additional arguments are passed to Gradle.
+To inspect the task order without executing release actions:
+
+```sh
+./tag.sh --dry-run
+```
+
+The release tasks (`getGitBranch`, `checkLocalTag`, `checkRemoteTag`,
+`updateVersion`, and `tag`) are registered once on the root project by
+`gradle/scripts/tag.gradle`.
+
+## Later use by json-message
+
+The current version is `10.0.0`, so a matching release publishes
+`org.duncanscott:enum-util:10.0.0`. The existing `json-message` dependency on
+`5.10.1` will need a separate version and repository update after publication.
+No changes to `json-message` are part of this migration.
+
+Its dependency repository can use this project's Maven endpoint:
+
+```text
+https://code.jgi.doe.gov/api/v4/projects/<groovy-utils-project-id>/packages/maven
+```
+
+For another private project's CI job to download these packages, add that
+project to this project's **Settings > CI/CD > Job token permissions** allowlist
+and ensure the user starting the downstream pipeline has access. A group Maven
+endpoint can also be used to consume packages from multiple projects.
