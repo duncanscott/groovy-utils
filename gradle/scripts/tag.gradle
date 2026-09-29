@@ -22,15 +22,18 @@ def executeGitCommand = { List<String> arguments, List<Integer> acceptedExitCode
 
 def selectUnusedVersion = {
     String candidate = rootProject.version.toString()
-    if (!(candidate ==~ /[0-9]+(\.[0-9]+)*/)) {
-        throw new GradleException("Release version [${candidate}] must contain only numbers separated by dots.")
+    // Match json-message: increment only the numeric part, preserving the suffix.
+    def match = candidate =~ /^([0-9]+(?:\.[0-9]+)*)(-\S+)?$/
+    if (!match.matches()) {
+        throw new GradleException("Invalid release version [${candidate}]. Use dot-separated numbers with an optional '-' suffix containing no whitespace, e.g. 10.0.0-jackson-2x.")
     }
 
-    List<String> numbers = candidate.tokenize('.')
+    List<String> numbers = match.group(1).tokenize('.')
+    String suffix = match.group(2) ?: ''
     while (existingTags.contains(candidate)) {
         println "Tag [${candidate}] already exists; incrementing the final version component."
         numbers[-1] = (new BigInteger(numbers[-1]) + BigInteger.ONE).toString()
-        candidate = numbers.join('.')
+        candidate = numbers.join('.') + suffix
     }
     rootProject.allprojects { version = candidate }
     println "Release version: ${candidate}"
@@ -52,7 +55,7 @@ tasks.register('getGitBranch') {
 
 tasks.register('checkLocalTag') {
     group = 'Version Control'
-    description = 'Select a numeric release version not already tagged locally'
+    description = 'Select a release version with an optional suffix not already tagged locally'
     dependsOn 'getGitBranch'
     notCompatibleWithConfigurationCache('This task updates project versions at runtime')
 
@@ -93,12 +96,14 @@ tasks.register('updateVersion') {
     doLast {
         File propertiesFile = rootProject.file('gradle.properties')
         String content = propertiesFile.getText('UTF-8')
-        def versionLines = content =~ /(?m)^version=[^\r\n]*/
+        def versionPattern = /(?m)^[\t ]*version[\t ]*=[^\r\n]*/
+        def versionLines = content =~ versionPattern
         if (versionLines.count != 1) {
             throw new GradleException('Expected exactly one version= line in gradle.properties.')
         }
         // Preserve all other properties, comments and formatting (there is no name property here).
-        propertiesFile.setText(content.replaceFirst(/(?m)^version=[^\r\n]*/, "version=${rootProject.version}"), 'UTF-8')
+        String replacement = java.util.regex.Matcher.quoteReplacement("version=${rootProject.version}")
+        propertiesFile.setText(content.replaceFirst(versionPattern, replacement), 'UTF-8')
         println "Updated gradle.properties to version [${rootProject.version}]."
     }
 }

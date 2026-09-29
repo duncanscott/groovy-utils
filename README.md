@@ -15,8 +15,10 @@ network access. Artifactory credentials are no longer used.
 ## Publish with GitLab CI/CD
 
 The root `.gitlab-ci.yml` runs only for **tag pushes** matching
-`^[0-9]+(\.[0-9]+)*$`, the same rule as `json-message`. Examples include `10`,
-`10.0`, and `10.0.0`; `v10.0.0` and `10.0.0-SNAPSHOT` are rejected. Branch pushes,
+`^[0-9]+(\.[0-9]+)*(-\S+)?$`, the same rule as `json-message`: a numeric version
+with an optional suffix starting with `-`, followed by one or more non-whitespace
+characters. Examples include `10`, `10.0`, `10.0.0`, `10.0.0-jackson-2x`, and
+`10.0.0-rc.1`; `v10.0.0`, `10.0.0-`, and tags containing spaces are rejected. Branch pushes,
 merge requests, schedules, and manually created pipelines do not create release
 pipelines. The tag must exactly match `version` in `gradle.properties`.
 
@@ -67,7 +69,11 @@ The `tag.sh` helper follows the `json-message` workflow:
 
 It checks the current version against local tags and tags on **every configured
 remote**, incrementing the final numeric component until it finds an unused
-version. It updates only the `version=` line in `gradle.properties`, stages all
+version. Set the full version, including any suffix, in `gradle.properties`.
+For example, if `10.0.0-jackson-2x` already exists, the next candidate is
+`10.0.1-jackson-2x`; the suffix is preserved unchanged. An unused version is
+kept as written. All five libraries use the same full version.
+It updates only the `version=` line in `gradle.properties`, stages all
 working changes (including untracked files), commits them as `version <version>`,
 and creates an annotated tag. If there are no changes, it tags the existing
 commit. It then pushes the current branch and **only the new tag** to each remote.
@@ -80,6 +86,9 @@ stops if a Git command fails. Pushes to multiple remotes are sequential, so a
 failure may leave earlier remotes updated. It does not run tests locally; CI
 runs them before package publication.
 
+`tag.sh` matches `json-message` main commit `c882353`. The Gradle release helper
+uses the same suffix format and incrementing behavior, while preserving this
+project's shared version across modules and its properties file layout.
 The wrapper locates the project directory and falls back to an installed SDKMAN
 or macOS JDK if `JAVA_HOME` is invalid. Additional arguments are passed to Gradle.
 To inspect the task order without executing release actions:
@@ -87,6 +96,8 @@ To inspect the task order without executing release actions:
 ```sh
 ./tag.sh --dry-run
 ```
+
+This displays the task plan; it does not query tags or calculate the next version.
 
 The release tasks (`getGitBranch`, `checkLocalTag`, `checkRemoteTag`,
 `updateVersion`, and `tag`) are registered once on the root project by

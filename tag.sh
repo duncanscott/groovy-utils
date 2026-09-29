@@ -6,7 +6,9 @@ SCRIPT_PATH=$(realpath "${BASH_SOURCE[0]}")
 SCRIPT_DIR=$(dirname "${SCRIPT_PATH}")
 cd "$SCRIPT_DIR"
 
-# Recover from a stale JAVA_HOME, following the json-message release helper.
+# Gradle refuses to start when JAVA_HOME points at a directory that no longer
+# exists -- e.g. after an SDKMAN upgrade replaces the pinned JDK a shell was
+# started with. Fall back to whatever JDK is actually installed.
 if [ ! -x "${JAVA_HOME}/bin/java" ]; then
     sdkman_java="${SDKMAN_DIR:-$HOME/.sdkman}/candidates/java/current"
     system_java=$(/usr/libexec/java_home 2>/dev/null || true)

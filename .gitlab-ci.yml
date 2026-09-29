@@ -1,7 +1,7 @@
 workflow:
   rules:
-    # Match json-message: release pipelines run only for numeric tag pushes.
-    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_TAG =~ /^[0-9]+(\.[0-9]+)*$/'
+    # Numeric release tags may have a nonempty, whitespace-free suffix.
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_TAG =~ /^[0-9]+(\.[0-9]+)*(-\S+)?$/'
     - when: never
 
 default:
@@ -27,7 +27,7 @@ build-and-publish:
       - .gradle/wrapper/
   script:
     - |
-      project_version="$(sed -n 's/^version=//p' gradle.properties | tr -d '\r')"
+      project_version="$(sed -n 's/^[[:space:]]*version[[:space:]]*=[[:space:]]*//p' gradle.properties | tr -d '\r')"
       if [ "$CI_COMMIT_TAG" != "$project_version" ]; then
         echo "Git tag ($CI_COMMIT_TAG) does not match gradle.properties version ($project_version)" >&2
         exit 1
