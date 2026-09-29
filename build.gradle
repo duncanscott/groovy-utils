@@ -1,7 +1,8 @@
 plugins {
     id 'idea'
-    id 'com.jfrog.artifactory' version "latest.release"
 }
+
+apply from: "${rootProject.projectDir}/gradle/scripts/tag.gradle"
 
 repositories {
     mavenCentral()
@@ -15,7 +16,6 @@ configure(javaProjects()) {
     apply plugin: 'groovy'
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
-    apply plugin: 'com.jfrog.artifactory'
 
     java {
         toolchain {
@@ -52,24 +52,29 @@ configure(javaProjects()) {
                 from components.java
                 artifact sourcesJar
                 artifact(file("$rootDir/gradle.properties"))
+                pom {
+                    // The additional properties artifact must not change JAR packaging.
+                    packaging = 'jar'
+                }
             }
         }
-    }
 
-    artifactory {
-        publish {
-            contextUrl = System.getenv('ARTIFACTORY_CONTEXT_URL')
-            repository {
-                repoKey = version.endsWith('SNAPSHOT') ? 'libs-snapshot-local' : 'libs-release-local'
-                username = System.getenv('ARTIFACTORY_USER')
-                password = System.getenv('ARTIFACTORY_PASSWORD')
-            }
-            defaults {
-                publications('mavenJava')
-                publishPom = true
+        repositories {
+            // GitLab supplies the destination and job token during CI builds.
+            // Local builds do not require publishing credentials.
+            if (System.getenv('CI_API_V4_URL') && System.getenv('CI_PROJECT_ID')) {
+                maven {
+                    name = 'GitLab'
+                    url = "${System.getenv('CI_API_V4_URL')}/projects/${System.getenv('CI_PROJECT_ID')}/packages/maven"
+                    credentials(HttpHeaderCredentials) {
+                        name = 'Job-Token'
+                        value = System.getenv('CI_JOB_TOKEN')
+                    }
+                    authentication {
+                        header(HttpHeaderAuthentication)
+                    }
+                }
             }
         }
     }
 }
-
-artifactoryPublish.skip = true

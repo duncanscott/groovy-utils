@@ -1,0 +1,129 @@
+String gitBranch = ''
+List<String> gitRemotes = []
+Set<String> existingTags = [] as Set
+
+def executeGitCommand = { List<String> arguments, List<Integer> acceptedExitCodes = [0] ->
+    def process = new ProcessBuilder(['git'] + arguments)
+        .directory(rootProject.projectDir)
+        .start()
+    // Drain both streams, keeping Git warnings out of branch and tag parsing.
+    StringBuffer output = new StringBuffer()
+    StringBuffer errors = new StringBuffer()
+    process.waitForProcessOutput(output, errors)
+    int exitCode = process.exitValue()
+    if (!acceptedExitCodes.contains(exitCode)) {
+        throw new GradleException("Git command [git ${arguments.join(' ')}] failed with exit code [${exitCode}]: ${errors}${output}")
+    }
+    if (errors.toString().trim()) {
+        logger.warn(errors.toString().trim())
+    }
+    [output: output.toString().trim(), exitCode: exitCode]
+}
+
+def selectUnusedVersion = {
+    String candidate = rootProject.version.toString()
+    if (!(candidate ==~ /[0-9]+(\.[0-9]+)*/)) {
+        throw new GradleException("Release version [${candidate}] must contain only numbers separated by dots.")
+    }
+
+    List<String> numbers = candidate.tokenize('.')
+    while (existingTags.contains(candidate)) {
+        println "Tag [${candidate}] already exists; incrementing the final version component."
+        numbers[-1] = (new BigInteger(numbers[-1]) + BigInteger.ONE).toString()
+        candidate = numbers.join('.')
+    }
+    rootProject.allprojects { version = candidate }
+    println "Release version: ${candidate}"
+}
+
+tasks.register('getGitBranch') {
+    group = 'Version Control'
+    description = 'Get the branch to commit and push for the release'
+    notCompatibleWithConfigurationCache('This task shares release state with other tasks')
+
+    doLast {
+        gitBranch = executeGitCommand(['rev-parse', '--abbrev-ref', 'HEAD']).output
+        if (gitBranch == 'HEAD') {
+            throw new GradleException('Check out a branch before tagging a release; HEAD is detached.')
+        }
+        println "Current Git branch: ${gitBranch}"
+    }
+}
+
+tasks.register('checkLocalTag') {
+    group = 'Version Control'
+    description = 'Select a numeric release version not already tagged locally'
+    dependsOn 'getGitBranch'
+    notCompatibleWithConfigurationCache('This task updates project versions at runtime')
+
+    doLast {
+        existingTags.addAll(executeGitCommand(['tag', '--list']).output.readLines())
+        selectUnusedVersion()
+    }
+}
+
+tasks.register('checkRemoteTag') {
+    group = 'Version Control'
+    description = 'Select a release version unused locally and on every configured remote'
+    dependsOn 'checkLocalTag'
+    notCompatibleWithConfigurationCache('This task updates project versions at runtime')
+
+    doLast {
+        gitRemotes = executeGitCommand(['remote']).output.readLines()
+        if (gitRemotes.isEmpty()) {
+            throw new GradleException('Configure a Git remote before tagging a release.')
+        }
+        gitRemotes.each { String remote ->
+            println "Checking tags on remote [${remote}]..."
+            executeGitCommand(['ls-remote', '--tags', '--refs', remote]).output.readLines().each { String line ->
+                existingTags.add(line.tokenize()[1].substring('refs/tags/'.length()))
+            }
+        }
+        // Check the union so incrementing for one remote cannot collide with another.
+        selectUnusedVersion()
+    }
+}
+
+tasks.register('updateVersion') {
+    group = 'Version Control'
+    description = 'Write the selected release version to gradle.properties'
+    dependsOn 'checkRemoteTag'
+    notCompatibleWithConfigurationCache('This task uses the selected runtime version')
+
+    doLast {
+        File propertiesFile = rootProject.file('gradle.properties')
+        String content = propertiesFile.getText('UTF-8')
+        def versionLines = content =~ /(?m)^version=[^\r\n]*/
+        if (versionLines.count != 1) {
+            throw new GradleException('Expected exactly one version= line in gradle.properties.')
+        }
+        // Preserve all other properties, comments and formatting (there is no name property here).
+        propertiesFile.setText(content.replaceFirst(/(?m)^version=[^\r\n]*/, "version=${rootProject.version}"), 'UTF-8')
+        println "Updated gradle.properties to version [${rootProject.version}]."
+    }
+}
+
+tasks.register('tag') {
+    group = 'Version Control'
+    description = 'Commit changes, create a release tag and push it for GitLab CI/CD'
+    dependsOn 'updateVersion'
+    notCompatibleWithConfigurationCache('This task uses the selected runtime version')
+
+    doLast {
+        String releaseVersion = rootProject.version.toString()
+        // Match json-message: include all current tracked and untracked changes.
+        executeGitCommand(['add', '-A'])
+        if (executeGitCommand(['diff', '--cached', '--quiet'], [0, 1]).exitCode == 1) {
+            executeGitCommand(['commit', '-m', "version ${releaseVersion}".toString()])
+        } else {
+            println 'No changes to commit; tagging the existing HEAD.'
+        }
+
+        executeGitCommand(['tag', '-a', releaseVersion, '-m', "version ${releaseVersion}".toString()])
+        gitRemotes.each { String remote ->
+            executeGitCommand(['push', remote, "refs/heads/${gitBranch}:refs/heads/${gitBranch}".toString()])
+            executeGitCommand(['push', remote, "refs/tags/${releaseVersion}:refs/tags/${releaseVersion}".toString()])
+            println "Pushed branch [${gitBranch}] and tag [${releaseVersion}] to remote [${remote}]."
+        }
+    }
+}
